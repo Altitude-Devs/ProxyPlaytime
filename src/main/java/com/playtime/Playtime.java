@@ -3,6 +3,8 @@ package com.playtime;
 import com.google.inject.Inject;
 import com.playtime.config.Config;
 import com.playtime.database.DatabaseManager;
+import com.playtime.events.LoginEvent;
+import com.playtime.events.LogoutEvent;
 import com.playtime.task.PlaytimeDataProcessor;
 import com.playtime.util.LogoutTracker;
 import com.velocitypowered.api.event.Subscribe;
@@ -56,6 +58,9 @@ public class Playtime {
                 .delay(1L, TimeUnit.MINUTES)
                 .repeat(1L, TimeUnit.MINUTES)
                 .schedule();
+
+        server.getEventManager().register(instance, new LoginEvent());
+        server.getEventManager().register(instance, new LogoutEvent());
     }
 
     private File getDataDirectory() {
