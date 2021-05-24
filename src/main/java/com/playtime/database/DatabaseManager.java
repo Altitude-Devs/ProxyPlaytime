@@ -24,6 +24,12 @@ public class DatabaseManager {
                 return;
             }
 
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
             connection = DriverManager.getConnection(
                     "jdbc:" + Config.DRIVER + "://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE, Config.USERNAME,
                     Config.PASSWORD);
