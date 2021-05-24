@@ -8,11 +8,14 @@ import com.playtime.util.LogoutTracker;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import org.slf4j.Logger;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "proxyplaytime", name = "Proxy Playtime", version = "0.1.0-SNAPSHOT",
@@ -22,17 +25,19 @@ public class Playtime {
     private final Logger logger;
     private static Playtime instance;
     private LuckPerms luckPerms;
+    private final Path dataDirectory;
 
     @Inject
-    public Playtime(ProxyServer server, Logger logger) {
+    public Playtime(ProxyServer server, Logger logger, @DataDirectory Path proxydataDirectory) {
         instance = this;
         this.server = server;
         this.logger = logger;
+        this.dataDirectory = proxydataDirectory;
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        Config.init();
+        Config.init(getDataDirectory());
         Config.loadConfig();
         if (DatabaseManager.getConnection() != null)
             DatabaseManager.initiate();
@@ -51,6 +56,10 @@ public class Playtime {
                 .delay(1L, TimeUnit.MINUTES)
                 .repeat(1L, TimeUnit.MINUTES)
                 .schedule();
+    }
+
+    private File getDataDirectory() {
+        return dataDirectory.toFile();
     }
 
     public ProxyServer getServer() {

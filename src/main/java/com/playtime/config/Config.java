@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -28,9 +29,9 @@ public final class Config {
     static int version;
     static boolean verbose;
 
-    public static void init() { // todo setup share for the config
-        CONFIG_FILE = new File(new File(System.getProperty("user.home")), "config.yml");
-        ;
+    public static void init(File path) {
+        CONFIG_FILE = new File(path, "config.yml");
+
         configLoader = YAMLConfigurationLoader.builder()
                 .setFile(CONFIG_FILE)
                 .setFlowStyle(DumperOptions.FlowStyle.BLOCK)
@@ -250,8 +251,8 @@ public final class Config {
     }
 
     public static boolean TRACK_TIME = false;
-    public static int AUTO_SAVE = -1;
-    public static int AUTO_RANK = -1;
+    public static long AUTO_SAVE = 5;
+    public static long AUTO_RANK = 5;
     public static String SERVER_DISPLAY_NAME = "";
     public static int PURGE_OFFLINE_USERS_FROM_CACHE = 5; //Make customizable (time in min)
 
@@ -262,8 +263,8 @@ public final class Config {
         database();
 
         TRACK_TIME = getBoolean("tracktime", false);
-        AUTO_SAVE = getInt("auto-save", -1);
-        AUTO_RANK = getInt("auto-rank", -1);
+        AUTO_SAVE = getLong("auto-save", 5L);
+        AUTO_RANK = getLong("auto-rank", 5L);
         SERVER_DISPLAY_NAME = getString("server", "");
     }
 }
