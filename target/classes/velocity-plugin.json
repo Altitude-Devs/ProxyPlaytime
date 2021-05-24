@@ -1,1 +1,0 @@
-{"id":"proxyplaytime","name":"Proxy Playtime","version":"0.1.0-SNAPSHOT","description":"Tracks and displays playtime per user","url":"https://alttd.com","authors":["Teri"],"dependencies":[],"main":"com.playtime.Playtime"}
