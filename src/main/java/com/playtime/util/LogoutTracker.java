@@ -1,6 +1,7 @@
 package com.playtime.util;
 
 import com.playtime.config.Config;
+import com.playtime.database.Queries;
 import com.playtime.maps.Maps;
 import com.playtime.util.objects.PlaytimePlayer;
 
@@ -26,6 +27,8 @@ public class LogoutTracker {
             if (playtimePlayer.getLastSavedServerTime().after(calendar.getTime())) {
                 Maps.playtimePlayers.remove(playtimePlayer.getUuid());
                 iterator.remove();
+                Queries.updatePlaytime(playtimePlayer);
+                Queries.updateSessions(playtimePlayer);
             }
         }
     }

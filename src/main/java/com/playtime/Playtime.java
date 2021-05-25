@@ -9,9 +9,11 @@ import com.playtime.task.PlaytimeDataProcessor;
 import com.playtime.util.LogoutTracker;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.scheduler.ScheduledTask;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import org.slf4j.Logger;
@@ -28,6 +30,8 @@ public class Playtime {
     private static Playtime instance;
     private LuckPerms luckPerms;
     private final Path dataDirectory;
+    ScheduledTask autoSave;
+    ScheduledTask logoutTracker;
 
     @Inject
     public Playtime(ProxyServer server, Logger logger, @DataDirectory Path proxydataDirectory) {
@@ -45,14 +49,14 @@ public class Playtime {
             DatabaseManager.initiate();
 
 
-        getServer()
+        autoSave = getServer()
                 .getScheduler()
                 .buildTask(instance, () -> new Thread(new PlaytimeDataProcessor()).start())
                 .delay(Config.AUTO_SAVE, TimeUnit.MINUTES)
                 .repeat(Config.AUTO_SAVE, TimeUnit.MINUTES)
                 .schedule();
 
-        getServer()
+        logoutTracker = getServer()
                 .getScheduler()
                 .buildTask(instance, LogoutTracker::handleQueue)
                 .delay(1L, TimeUnit.MINUTES)
@@ -61,6 +65,18 @@ public class Playtime {
 
         server.getEventManager().register(instance, new LoginEvent());
         server.getEventManager().register(instance, new LogoutEvent());
+    }
+
+    @Subscribe
+    public void onProxyShutdown(ProxyShutdownEvent event) {
+        getLogger().info("Starting shutdown process...");
+        autoSave.cancel();
+        logoutTracker.cancel();
+
+        getLogger().info("Saving player data...");
+        new PlaytimeDataProcessor().run();
+        getLogger().info("Goodbye!");
+//        LogoutTracker.handleQueue();
     }
 
     private File getDataDirectory() {

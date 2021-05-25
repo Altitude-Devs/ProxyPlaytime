@@ -263,8 +263,8 @@ public final class Config {
         database();
 
         TRACK_TIME = getBoolean("tracktime", false);
-        AUTO_SAVE = getLong("auto-save", 5L);
-        AUTO_RANK = getLong("auto-rank", 5L);
+        AUTO_SAVE = getLong("auto-save", 1L);
+        AUTO_RANK = getLong("auto-rank", 1L);
         SERVER_DISPLAY_NAME = getString("server", "");
     }
 }

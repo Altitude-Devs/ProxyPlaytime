@@ -19,7 +19,7 @@ public class Queries {
         String sql = "INSERT INTO playtime " +
                 "(uuid, server_name, playtime, last_seen) " +
                 "VALUES (?, ?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE time = ?, last_seen = ?;";
+                "ON DUPLICATE KEY UPDATE playtime = ?, last_seen = ?;";
         try {
             PreparedStatement statement = DatabaseManager.getConnection().prepareStatement(sql);
 
@@ -51,7 +51,7 @@ public class Queries {
     }
 
     public static void batchUpdateSessions() {
-        String sql = "INSERT INTO playtime " +
+        String sql = "INSERT INTO sessions " +
                 "(uuid, server_name, session_start, session_end) " +
                 "VALUES (?, ?, ?, ?);";
 
@@ -129,5 +129,68 @@ public class Queries {
             exception.printStackTrace();
         }
         return null;
+    }
+
+    public static void updatePlaytime(PlaytimePlayer playtimePlayer) {
+        String sql = "INSERT INTO playtime " +
+                "(uuid, server_name, playtime, last_seen) " +
+                "VALUES (?, ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE playtime = ?, last_seen = ?;";
+        try {
+            PreparedStatement statement = DatabaseManager.getConnection().prepareStatement(sql);
+
+            Iterator<String> iterator = playtimePlayer.getToUpdateServers().iterator();
+
+            while (iterator.hasNext()) {
+                String server = iterator.next();
+                ServerPlaytime playtimeOnServer = playtimePlayer.getPlaytimeOnServer(server);
+
+                if (playtimeOnServer == null) continue;
+
+                statement.setString(1, playtimePlayer.getUuid().toString());
+                statement.setString(2, server);
+                statement.setLong(3, playtimeOnServer.getPlaytime());
+                statement.setLong(4, playtimeOnServer.getLastSeen());
+                statement.setLong(5, playtimeOnServer.getPlaytime());
+                statement.setLong(6, playtimeOnServer.getLastSeen());
+
+                statement.addBatch();
+                iterator.remove();
+            }
+
+            statement.executeBatch();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public static void updateSessions(PlaytimePlayer playtimePlayer) {
+        String sql = "INSERT INTO playtime " +
+                "(uuid, server_name, session_start, session_end) " +
+                "VALUES (?, ?, ?, ?);";
+
+        try {
+            PreparedStatement statement = DatabaseManager.getConnection().prepareStatement(sql);
+
+            Iterator<ServerSession> iterator = playtimePlayer.getToUpdateSessions().iterator();
+
+            while (iterator.hasNext()) {
+                ServerSession serverSession = iterator.next();
+
+                if (serverSession == null) continue;
+
+                statement.setString(1, playtimePlayer.getUuid().toString());
+                statement.setString(2, serverSession.getServerName());
+                statement.setLong(3, serverSession.getSessionStart());
+                statement.setLong(4, serverSession.getSessionEnd());
+
+                statement.addBatch();
+                iterator.remove();
+            }
+
+            statement.executeBatch();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 }

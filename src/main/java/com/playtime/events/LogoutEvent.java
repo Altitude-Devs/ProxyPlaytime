@@ -3,6 +3,7 @@ package com.playtime.events;
 import com.playtime.maps.Maps;
 import com.playtime.util.objects.PlaytimePlayer;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.player.KickedFromServerEvent;
 
 import java.util.UUID;
@@ -10,14 +11,14 @@ import java.util.UUID;
 public class LogoutEvent {
 
     @Subscribe
-    public void onKickedFromServer(KickedFromServerEvent event) {
-        KickedFromServerEvent.ServerKickResult result = event.getResult();
-        System.out.println(result.toString()); //TODO debug statement
+    public void onDisconnectEvent(DisconnectEvent event) {
+        //TODO only run this when someone actually logs out, not when they swap servers
         UUID uuid = event.getPlayer().getUniqueId();
 
         if (!Maps.playtimePlayers.containsKey(uuid)) return;
 
         PlaytimePlayer playtimePlayer = Maps.playtimePlayers.get(uuid);
         playtimePlayer.updateServerTime(true);
+        playtimePlayer.startNewSession("");
     }
 }

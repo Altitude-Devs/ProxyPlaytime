@@ -12,13 +12,17 @@ public class LoginEvent {
 
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
+
         Player player = event.getPlayer();
         PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(player);
         if (playtimePlayer == null) {
             playtimePlayer = new PlaytimePlayer(player.getUniqueId(), new HashMap<>());
         }
-        String serverName = player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServer().getServerInfo().getName() : "";
+        String serverName = event.getServer().getServerInfo().getName();
+        if (serverName.isEmpty()) return;
         playtimePlayer.updateServerTime(serverName);
-        playtimePlayer.startNewSession(serverName);
+        if (event.getPreviousServer().isPresent()) {
+            playtimePlayer.startNewSession(serverName);
+        }
     }
 }

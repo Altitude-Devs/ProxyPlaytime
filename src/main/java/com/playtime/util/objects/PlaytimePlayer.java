@@ -38,7 +38,6 @@ public class PlaytimePlayer {
         updateServerTime(new Date());
 
         if (logout) {
-            Maps.playtimeSeen.put(uuid, new PlaytimeSeen(uuid, currentServer, System.currentTimeMillis())); //Save last seen in cache
             currentServer = "";
             online = false;
             Maps.loggedOutPlayers.add(this); //Queue player for removal from cache
@@ -76,6 +75,7 @@ public class PlaytimePlayer {
         playtimePerServer.put(currentServer, serverPlaytime);
         if (!toUpdateServers.contains(currentServer)) toUpdateServers.add(currentServer);
         lastSavedServerTime = currentTime;
+        Maps.playtimeSeen.put(uuid, new PlaytimeSeen(uuid, currentServer, System.currentTimeMillis())); //Save last seen in cache
     }
 
     public ServerPlaytime getPlaytimeOnServer(String server) {
@@ -91,7 +91,6 @@ public class PlaytimePlayer {
     }
 
     public void startNewSession(String server) {
-        if (server.isEmpty()) return;
         Date currentTime = new Date();
 
         toUpdateSessions.add(new ServerSession(currentServer, currentSessionStart.getTime(), currentTime.getTime()));
