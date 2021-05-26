@@ -96,7 +96,7 @@ public class Queries {
 
             while (resultSet.next()) {
                 String serverName = resultSet.getString("server_name");
-                hashMap.put(serverName, new ServerPlaytime(resultSet.getLong("playtime"), resultSet.getLong("last_seen")));
+                hashMap.put(serverName, new ServerPlaytime(serverName, resultSet.getLong("playtime"), resultSet.getLong("last_seen")));
             }
 
             PlaytimePlayer playtimePlayer = new PlaytimePlayer(uuid, hashMap);

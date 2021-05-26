@@ -68,7 +68,7 @@ public class PlaytimePlayer {
             serverPlaytime.addPlaytime(unsavedTime);
             serverPlaytime.setLastSeen(System.currentTimeMillis());
         } else {
-            serverPlaytime = new ServerPlaytime(unsavedTime, System.currentTimeMillis());
+            serverPlaytime = new ServerPlaytime(currentServer, unsavedTime, System.currentTimeMillis());
         }
 
         playtimeUpdated=false;
@@ -84,7 +84,7 @@ public class PlaytimePlayer {
 
     public long getTotalPlaytime() {
         if (!playtimeUpdated) {
-            totalPlaytime = playtimePerServer.values().stream().map(ServerPlaytime::getPlaytime).mapToLong(Long::longValue).sum();
+            totalPlaytime = playtimePerServer.values().stream().filter(p -> Config.TRACKED_SERVERS.contains(p.getServer())).map(ServerPlaytime::getPlaytime).mapToLong(Long::longValue).sum();
             playtimeUpdated = true;
         }
         return totalPlaytime;

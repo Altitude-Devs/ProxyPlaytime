@@ -1,13 +1,20 @@
 package com.playtime.util.objects;
 
 public class ServerPlaytime {
+    String server;
     long playtime;
     long lastSeen;
 
-    public ServerPlaytime(long playtime, long lastSeen) {
+    public ServerPlaytime(String server, long playtime, long lastSeen) {
+        this.server = server;
         this.playtime = playtime;
         this.lastSeen = lastSeen;
     }
+
+    public String getServer() {
+        return server;
+    }
+
     public long getPlaytime() {
         return playtime;
     }
