@@ -74,7 +74,13 @@ public class Playtime {
         logoutTracker.cancel();
 
         getLogger().info("Saving player data...");
-        new PlaytimeDataProcessor().run();
+        Thread thread = new Thread(new PlaytimeDataProcessor());
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         getLogger().info("Goodbye!");
 //        LogoutTracker.handleQueue();
     }
