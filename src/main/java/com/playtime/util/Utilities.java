@@ -8,7 +8,7 @@ public class Utilities {
         return convertTime((int) TimeUnit.MILLISECONDS.toMinutes(timeInMillis));
     }
 
-    public static String convertTime(int timeInMinutes) {
+    private static String convertTime(int timeInMinutes) {
         int days = (int) TimeUnit.MINUTES.toDays(timeInMinutes);
         int hours = (int) (TimeUnit.MINUTES.toHours(timeInMinutes) - TimeUnit.DAYS.toHours(days));
         int minutes = (int) (TimeUnit.MINUTES.toMinutes(timeInMinutes) - TimeUnit.HOURS.toMinutes(hours)
