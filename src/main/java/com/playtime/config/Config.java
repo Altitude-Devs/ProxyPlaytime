@@ -172,7 +172,7 @@ public final class Config {
         NO_PLAYTIME_SERVER("messages.no-playtime-server", "&c%player% does not have any playtime on %server%."),
         PLAYER_NOT_FOUND("messages.player-not-found", "&c%player% is not a valid player."),
         INVALID_SERVER("messages.invalid-server", "&c%server% server does not exist."),
-        NO_PLAYTIME_STORED("messages.no-playtime-stored", "&c%player% does not have any playtime stored in Plan."),
+        NO_PLAYTIME_STORED("messages.no-playtime-stored", "&c%player% does not have any playtime stored."),
         INVALID_SET_COMMAND("messages.invalid-set-command", "&cInvalid Usage. /playtime set <player> <server> <time>"),
         PLAYER_TIME_CHANGE("messages.player-time-change", "&a%player%'s time was successfully changed for %server%", "&aOldtime ➜ %oldtime%", "&aNewTime ➜ %newtime%"),
         INVALID_SEEN_COMMAND("messages.invalid-seen-command", "&cInvalid Usage. /seen <player>"),
@@ -255,6 +255,7 @@ public final class Config {
     public static long AUTO_RANK = 5;
     public static String SERVER_DISPLAY_NAME = "";
     public static int PURGE_OFFLINE_USERS_FROM_CACHE = 5; //Make customizable (time in min)
+    public static ArrayList<String> TRACKED_SERVERS = new ArrayList<>();
 
     public static void loadConfig() {
         loadMessages();
@@ -266,5 +267,6 @@ public final class Config {
         AUTO_SAVE = getLong("auto-save", 1L);
         AUTO_RANK = getLong("auto-rank", 1L);
         SERVER_DISPLAY_NAME = getString("server", "");
+        TRACKED_SERVERS.addAll(getList("tracked-servers", Arrays.asList("Server1", "Server2")));
     }
 }

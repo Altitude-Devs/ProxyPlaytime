@@ -1,12 +1,14 @@
 package com.playtime;
 
 import com.google.inject.Inject;
+import com.playtime.commands.PlaytimeCMD;
+import com.playtime.commands.idkyet.PlaytimeForPlayer;
 import com.playtime.config.Config;
 import com.playtime.database.DatabaseManager;
 import com.playtime.events.LoginEvent;
 import com.playtime.events.LogoutEvent;
 import com.playtime.task.PlaytimeDataProcessor;
-import com.playtime.util.LogoutTracker;
+import com.playtime.task.LogoutTracker;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -24,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "proxyplaytime", name = "Proxy Playtime", version = "0.1.0-SNAPSHOT",
         url = "https://alttd.com", description = "Tracks and displays playtime per user", authors = {"Teri"})
-public class Playtime {
+public class Playtime { //TODO only track playtime on servers in config
     private final ProxyServer server;
     private final Logger logger;
     private static Playtime instance;
@@ -65,6 +67,9 @@ public class Playtime {
 
         server.getEventManager().register(instance, new LoginEvent());
         server.getEventManager().register(instance, new LogoutEvent());
+
+        PlaytimeCMD playtimeCMD = new PlaytimeCMD();
+        playtimeCMD.createPlaytimeCommand(server);
     }
 
     @Subscribe

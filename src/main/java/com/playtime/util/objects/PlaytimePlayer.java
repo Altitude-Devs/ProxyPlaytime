@@ -1,5 +1,7 @@
 package com.playtime.util.objects;
 
+import com.playtime.Playtime;
+import com.playtime.config.Config;
 import com.playtime.maps.Maps;
 
 import java.util.Date;
@@ -38,6 +40,8 @@ public class PlaytimePlayer {
         updateServerTime(new Date());
 
         if (logout) {
+            Playtime.getInstance().getLogger().info("Handling logged out player: " + uuid); //TODO debug
+            saveSession();
             currentServer = "";
             online = false;
             Maps.loggedOutPlayers.add(this); //Queue player for removal from cache
@@ -54,15 +58,19 @@ public class PlaytimePlayer {
             return;
         }
 
+        if (!currentServer.equals(server)) {
+            saveSession();
+        }
+
         updateServerTime(currentTime);
         currentServer = server;
     }
 
     private void updateServerTime(Date currentTime) {
-
         ServerPlaytime serverPlaytime;
         long unsavedTime = currentTime.getTime() - lastSavedServerTime.getTime();
 
+        Playtime.getInstance().getLogger().info("Updating player time on server: " + currentServer + " for player: " + uuid); //TODO debug
         if (playtimePerServer.containsKey(currentServer)) {
             serverPlaytime = playtimePerServer.get(currentServer);
             serverPlaytime.addPlaytime(unsavedTime);
@@ -90,13 +98,12 @@ public class PlaytimePlayer {
         return totalPlaytime;
     }
 
-    public void startNewSession(String server) {
+    public void saveSession() {
         Date currentTime = new Date();
 
         toUpdateSessions.add(new ServerSession(currentServer, currentSessionStart.getTime(), currentTime.getTime()));
 
         currentSessionStart = currentTime;
-        currentServer = server;
     }
 
     public Date getLastSavedServerTime() {

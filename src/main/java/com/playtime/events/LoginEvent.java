@@ -1,5 +1,6 @@
 package com.playtime.events;
 
+import com.playtime.Playtime;
 import com.playtime.database.Queries;
 import com.playtime.util.objects.PlaytimePlayer;
 import com.velocitypowered.api.event.Subscribe;
@@ -18,6 +19,7 @@ public class LoginEvent {
             playtimePlayer = new PlaytimePlayer(player.getUniqueId(), new HashMap<>());
         }
         String serverName = event.getServer().getServerInfo().getName();
+        Playtime.getInstance().getLogger().info("Server name: " + serverName); //TODO debug
         if (serverName.isEmpty()) return;
         playtimePlayer.updateServerTime(serverName);
     }

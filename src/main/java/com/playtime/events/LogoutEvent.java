@@ -1,10 +1,10 @@
 package com.playtime.events;
 
+import com.playtime.Playtime;
 import com.playtime.maps.Maps;
 import com.playtime.util.objects.PlaytimePlayer;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
-import com.velocitypowered.api.event.player.KickedFromServerEvent;
 
 import java.util.UUID;
 
@@ -19,6 +19,6 @@ public class LogoutEvent {
 
         PlaytimePlayer playtimePlayer = Maps.playtimePlayers.get(uuid);
         playtimePlayer.updateServerTime(true);
-        playtimePlayer.startNewSession("");
+        Playtime.getInstance().getLogger().info("Logged out player: " + event.getPlayer().getUsername()); //TODO debug
     }
 }
