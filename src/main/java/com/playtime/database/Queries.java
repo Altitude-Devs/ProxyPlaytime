@@ -81,8 +81,7 @@ public class Queries {
         }
     }
 
-    public static PlaytimePlayer getPlaytimePlayer(Player player) {
-        UUID uuid = player.getUniqueId();
+    public static PlaytimePlayer getPlaytimePlayer(UUID uuid) {
         if (Maps.playtimePlayers.containsKey(uuid)) {
             return Maps.playtimePlayers.get(uuid);
         }

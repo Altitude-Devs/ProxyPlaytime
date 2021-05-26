@@ -12,9 +12,8 @@ public class LoginEvent {
 
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
-
         Player player = event.getPlayer();
-        PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(player);
+        PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(player.getUniqueId());
         if (playtimePlayer == null) {
             playtimePlayer = new PlaytimePlayer(player.getUniqueId(), new HashMap<>());
         }
