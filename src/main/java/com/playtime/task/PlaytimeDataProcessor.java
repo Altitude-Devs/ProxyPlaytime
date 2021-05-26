@@ -27,6 +27,7 @@ public class PlaytimeDataProcessor implements Runnable{
     public void run() {
         try {
             for (PlaytimePlayer playtimePlayer : Maps.playtimePlayers.values()) {
+                if (!playtimePlayer.isOnline()) return;
                 playtimePlayer.updateServerTime(false);
 
                 PlaytimeSeen playtimeSeen = Maps.playtimeSeen.get(playtimePlayer.getUuid());
