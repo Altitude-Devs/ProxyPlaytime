@@ -20,8 +20,5 @@ public class LoginEvent {
         String serverName = event.getServer().getServerInfo().getName();
         if (serverName.isEmpty()) return;
         playtimePlayer.updateServerTime(serverName);
-        if (event.getPreviousServer().isPresent()) {
-            playtimePlayer.startNewSession(serverName);
-        }
     }
 }
