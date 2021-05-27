@@ -8,12 +8,15 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.playtime.Playtime;
 import com.playtime.commands.idkyet.PlaytimeForPlayer;
 import com.velocitypowered.api.command.BrigadierCommand;
+import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 public class PlaytimeCMD {
 
@@ -21,8 +24,8 @@ public class PlaytimeCMD {
         LiteralCommandNode<CommandSource> playtimeCommand = LiteralArgumentBuilder
                 .<CommandSource>literal("playtime")
                 .requires(ctx -> ctx.hasPermission("playtime.use")) //TODO permission system? load permissions from config?
-//                .then(RequiredArgumentBuilder
-//                        .<CommandSource, String>argument("player", StringArgumentType.word())
+                .then(RequiredArgumentBuilder
+                        .<CommandSource, String>argument("player", StringArgumentType.word()))
 //                        .suggests((context, builder) -> {
 //                            Collection<String> possibleValues = new ArrayList<>();
 //                            for (Player player : proxyServer.getAllPlayers()) {
@@ -38,14 +41,27 @@ public class PlaytimeCMD {
 //                            return builder.buildFuture();
 //                        }))
                 .executes(commandContext -> {
-                    Playtime.getInstance().getLogger().info("Handling default playtime command send by: " + commandContext.getSource().toString()); //TODO debug
-                    PlaytimeForPlayer.getPlaytime(commandContext.getSource().toString());
+                    Optional<Player> playerOptional = proxyServer.getPlayer(commandContext.getArgument("player", String.class));
+                    if (playerOptional.isPresent()) {
+                        Playtime.getInstance().getLogger().info("Handling default playtime command send by: " + commandContext.getSource().toString()); //TODO debug
+                        Component playtime = PlaytimeForPlayer.getPlaytime(playerOptional.get().getUniqueId());
+                        commandContext.getSource().sendMessage(playtime);
+                    } else {
+                        Playtime.getInstance().getLogger().info("Handling default playtime command send by: " + commandContext.getSource().toString()); //TODO debug
+                    }
                     return 1;
                 })
                 .build();
 
         BrigadierCommand brigadierCommand = new BrigadierCommand(playtimeCommand);
 
-        proxyServer.getCommandManager().register(brigadierCommand);
+        CommandMeta.Builder metaBuilder = proxyServer.getCommandManager().metaBuilder(brigadierCommand);
+
+        metaBuilder.aliases("playtime");
+        metaBuilder.aliases("pt");
+
+        CommandMeta meta = metaBuilder.build();
+
+        proxyServer.getCommandManager().register(meta, brigadierCommand);
     }
 }

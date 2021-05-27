@@ -15,9 +15,10 @@ public class PlaytimeForPlayer {
 
     public static Component getPlaytime(String playerName) {
         UUID uuid = getPlayerUUID(playerName);
-        if (uuid == null) {
-            return MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
-        }
+        return getPlaytime(uuid);
+    }
+
+    public static Component getPlaytime(UUID uuid) {
         PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(uuid);
 
         if (playtimePlayer == null) {

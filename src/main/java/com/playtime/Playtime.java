@@ -68,8 +68,7 @@ public class Playtime { //TODO only track playtime on servers in config
         server.getEventManager().register(instance, new LoginEvent());
         server.getEventManager().register(instance, new LogoutEvent());
 
-        PlaytimeCMD playtimeCMD = new PlaytimeCMD();
-        playtimeCMD.createPlaytimeCommand(server);
+        new PlaytimeCMD().createPlaytimeCommand(server);
     }
 
     @Subscribe
