@@ -7,6 +7,7 @@ import com.playtime.config.Config;
 import com.playtime.database.DatabaseManager;
 import com.playtime.events.LoginEvent;
 import com.playtime.events.LogoutEvent;
+import com.playtime.handlers.ServerHandler;
 import com.playtime.task.PlaytimeDataProcessor;
 import com.playtime.task.LogoutTracker;
 import com.velocitypowered.api.event.Subscribe;
@@ -35,6 +36,8 @@ public class Playtime { //TODO only track playtime on servers in config
     ScheduledTask autoSave;
     ScheduledTask logoutTracker;
 
+    private ServerHandler serverHandler;
+
     @Inject
     public Playtime(ProxyServer server, Logger logger, @DataDirectory Path proxydataDirectory) {
         instance = this;
@@ -47,6 +50,7 @@ public class Playtime { //TODO only track playtime on servers in config
     public void onProxyInitialization(ProxyInitializeEvent event) {
         Config.init(getDataDirectory());
         //Config.loadConfig();
+        serverHandler = new ServerHandler();
         if (DatabaseManager.getConnection() != null)
             DatabaseManager.initiate();
 

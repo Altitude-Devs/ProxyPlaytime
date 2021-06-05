@@ -5,6 +5,7 @@ import com.google.common.reflect.TypeToken;
 import com.playtime.maps.Maps;
 import com.playtime.util.objects.Groups;
 import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.yaml.snakeyaml.DumperOptions;
@@ -20,7 +21,7 @@ import java.util.regex.Pattern;
 
 public final class Config {
     private static final Pattern PATH_PATTERN = Pattern.compile("\\.");
-    private static final String HEADER = "";
+    private static final String HEADER = "The main configuration file";
 
     private static File CONFIG_FILE;
     public static ConfigurationNode config;
@@ -52,7 +53,7 @@ public final class Config {
         }
 
         try {
-            config = configLoader.load();
+            config = configLoader.load(ConfigurationOptions.defaults().setHeader(HEADER));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -254,7 +255,7 @@ public final class Config {
     public static int PURGE_OFFLINE_USERS_FROM_CACHE = 5; //Make customizable (time in min)
     public static ArrayList<String> TRACKED_SERVERS = new ArrayList<>();
 
-    public static void loadConfig() {
+    private static void loadConfig() {
         TRACK_TIME = getBoolean("tracktime", false);
         AUTO_SAVE = getLong("auto-save", 1L);
         AUTO_RANK = getLong("auto-rank", 1L);
