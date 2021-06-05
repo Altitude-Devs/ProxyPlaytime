@@ -5,6 +5,7 @@ import com.playtime.config.Config;
 import com.playtime.database.Queries;
 import com.playtime.util.Utilities;
 import com.playtime.util.objects.PlaytimePlayer;
+import com.playtime.util.objects.ServerPlaytime;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.luckperms.api.model.user.User;
@@ -36,8 +37,10 @@ public class PlaytimeForPlayer {
 
         stringBuilder.append(header.replaceAll("%player%", getPlayerName(playtimePlayer.getUuid())));
 
-        for (String server: Config.TRACKED_SERVERS) {
-            long playtime = playtimePlayer.getPlaytimeOnServer(server).getPlaytime();
+        for (String server: Config.TRACKED_SERVERS) { // could loop the ServerPlaytime objects and avoid NPE
+            ServerPlaytime serverPlaytime = playtimePlayer.getPlaytimeOnServer(server);
+            if(serverPlaytime == null) continue;
+            long playtime = serverPlaytime.getPlaytime();
             if (playtime == 0) continue;
             stringBuilder.append(format.replaceAll("%server%", server).replaceAll("%time%", Utilities.convertTime(playtime)));
         }
