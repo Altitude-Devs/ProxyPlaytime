@@ -46,7 +46,7 @@ public class Playtime { //TODO only track playtime on servers in config
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         Config.init(getDataDirectory());
-        Config.loadConfig();
+        //Config.loadConfig();
         if (DatabaseManager.getConnection() != null)
             DatabaseManager.initiate();
 

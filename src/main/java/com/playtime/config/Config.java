@@ -151,9 +151,6 @@ public final class Config {
     }
 
     private static ConfigurationNode getNode(String path) {
-//        if (config.getNode(splitPath(path)).isVirtual()) {
-//            new RegexConfig("Dummy");
-//        }
         return config.getNode(splitPath(path));
     }
 
@@ -200,7 +197,7 @@ public final class Config {
         }
     }
 
-    private static void loadSeenServers() {
+    private static void loadSeenServers() { // i'd suggest moving this into a serverwrapper and using the serverconfig;)
         Maps.seenServers.clear();
 
         String path = "seen-servers-format";
@@ -215,7 +212,7 @@ public final class Config {
         }
     }
 
-    private static void loadGroups() {
+    private static void loadGroups() { // again a wrapper with groupconfig?
         Maps.groups.clear();
 
         String path = "groups";
@@ -258,11 +255,6 @@ public final class Config {
     public static ArrayList<String> TRACKED_SERVERS = new ArrayList<>();
 
     public static void loadConfig() {
-        loadMessages();
-        loadSeenServers();
-        loadGroups();
-        database();
-
         TRACK_TIME = getBoolean("tracktime", false);
         AUTO_SAVE = getLong("auto-save", 1L);
         AUTO_RANK = getLong("auto-rank", 1L);
