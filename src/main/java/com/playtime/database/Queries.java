@@ -164,7 +164,7 @@ public class Queries {
     }
 
     public static void updateSessions(PlaytimePlayer playtimePlayer) {
-        String sql = "INSERT INTO playtime " +
+        String sql = "INSERT INTO sessions " +
                 "(uuid, server_name, session_start, session_end) " +
                 "VALUES (?, ?, ?, ?);";
 

@@ -26,7 +26,7 @@ public class PlaytimeCMD {
                 .requires(ctx -> ctx.hasPermission("playtime.use"))
                 .then(RequiredArgumentBuilder
                         .<CommandSource, String>argument("player", StringArgumentType.word())
-                        .requires(ctx -> ctx.hasPermission("playtime.use.other")) // @teri what's the permission to view other players pt?
+                        .requires(ctx -> ctx.hasPermission("playtime.use.other"))
                         .suggests((context, builder) -> {
                             Collection<String> possibleValues = new ArrayList<>();
                             for (Player player : proxyServer.getAllPlayers()) {
@@ -54,7 +54,11 @@ public class PlaytimeCMD {
                         })
                 )
                 .executes(commandContext -> {
-                    // handle playtime for self
+//                    CommandSource source = commandContext.getSource();
+//                    Playtime.getInstance().getLogger().info("Handling default playtime command send by: " + source.toString()); //TODO debug
+//                    System.out.println(source);
+//                    Component playtime = PlaytimeForPlayer.getPlaytime(playerOptional.get().getUniqueId());
+//                    source.sendMessage(playtime);
                     return 1;
                 })
                 .build();
