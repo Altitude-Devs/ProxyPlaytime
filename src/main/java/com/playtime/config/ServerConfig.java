@@ -68,7 +68,7 @@ public final class ServerConfig {
 
     /** DO NOT EDIT ANYTHING ABOVE **/
 
-    public static String DISPLAYNAME = "servername";
+    public String DISPLAYNAME = "servername";
     private void ServerSettings() {
         DISPLAYNAME = getString("display-name", DISPLAYNAME);
     }

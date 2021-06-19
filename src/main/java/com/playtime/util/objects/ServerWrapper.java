@@ -14,7 +14,7 @@ public class ServerWrapper {
         this.registeredServer = registeredServer;
         this.serverName = registeredServer.getServerInfo().getName();
 
-        this.displayName = ServerConfig.DISPLAYNAME;
+        this.displayName = serverConfig.DISPLAYNAME;
     }
 
     public RegisteredServer getRegisteredServer() {
