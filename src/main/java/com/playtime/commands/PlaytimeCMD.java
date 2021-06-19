@@ -45,15 +45,18 @@ public class PlaytimeCMD {
                             Optional<Player> playerOptional = proxyServer.getPlayer(commandContext.getArgument("player", String.class));
                             if (playerOptional.isPresent()) {
                                 Playtime.getInstance().getLogger().info("Handling default playtime command send by: " + commandContext.getSource().toString()); //TODO debug
-                                Component playtime = PlaytimeForPlayer.getPlaytime(playerOptional.get().getUniqueId());
-                                commandContext.getSource().sendMessage(playtime);
+                                execute(commandContext.getSource(), playerOptional.get());
+//                                Component playtime = PlaytimeForPlayer.getPlaytime(playerOptional.get().getUniqueId());
+//                                commandContext.getSource().sendMessage(playtime);
                             } else {
                                 Playtime.getInstance().getLogger().info("Handling default playtime command send by: " + commandContext.getSource().toString()); //TODO debug
                             }
                             return 1;
                         })
                 )
+                .requires(commandSource ->  commandSource instanceof Player)
                 .executes(commandContext -> {
+                    execute(commandContext.getSource(), (Player) commandContext.getSource());
 //                    CommandSource source = commandContext.getSource();
 //                    Playtime.getInstance().getLogger().info("Handling default playtime command send by: " + source.toString()); //TODO debug
 //                    System.out.println(source);
@@ -73,5 +76,10 @@ public class PlaytimeCMD {
         CommandMeta meta = metaBuilder.build();
 
         proxyServer.getCommandManager().register(meta, brigadierCommand);
+    }
+
+    public void execute(CommandSource source, Player target) {
+        Component playtime = PlaytimeForPlayer.getPlaytime(target.getUniqueId());
+        source.sendMessage(playtime);
     }
 }
