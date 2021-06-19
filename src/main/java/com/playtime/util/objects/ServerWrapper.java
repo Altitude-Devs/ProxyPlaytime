@@ -9,12 +9,14 @@ public class ServerWrapper {
     private final String serverName;
 
     private final String displayName;
+    private final boolean trackPlayTime;
 
     public ServerWrapper(RegisteredServer registeredServer, ServerConfig serverConfig) {
         this.registeredServer = registeredServer;
         this.serverName = registeredServer.getServerInfo().getName();
 
         this.displayName = serverConfig.DISPLAYNAME;
+        this.trackPlayTime = serverConfig.TRACKPLAYTIME;
     }
 
     public RegisteredServer getRegisteredServer() {
@@ -25,4 +27,11 @@ public class ServerWrapper {
         return serverName;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public boolean isTrackPlayTime() {
+        return trackPlayTime;
+    }
 }

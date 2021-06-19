@@ -69,7 +69,9 @@ public final class ServerConfig {
     /** DO NOT EDIT ANYTHING ABOVE **/
 
     public String DISPLAYNAME = "servername";
+    public boolean TRACKPLAYTIME = false;
     private void ServerSettings() {
         DISPLAYNAME = getString("display-name", DISPLAYNAME);
+        TRACKPLAYTIME = getBoolean("track-playtime", TRACKPLAYTIME);
     }
 }
