@@ -43,11 +43,15 @@ public class PlaytimeForPlayer {
             if(serverPlaytime == null) continue;
             long playtime = serverPlaytime.getPlaytime();
             if (playtime == 0) continue;
-            stringBuilder.append(format.replaceAll("%server%", server).replaceAll("%time%", Utilities.convertTime(playtime))).append("\n");
+            stringBuilder.append(format.replaceAll("%server%", capitalize(server)).replaceAll("%time%", Utilities.convertTime(playtime))).append("\n");
         }
 
         stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(playtimePlayer.getTotalPlaytime())));
 
         return stringBuilder.toString();
+    }
+
+    private static String capitalize(String string) {
+        return string.substring(0, 1).toUpperCase() + string.substring(1);
     }
 }
