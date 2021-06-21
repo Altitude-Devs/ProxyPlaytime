@@ -8,9 +8,12 @@ import com.playtime.util.objects.ServerPlaytime;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
-public class PlaytimeForPlayer {
+public class PlaytimeExtraForPlayer {
 
     public static Component getPlaytime(String playerName) {
         UUID uuid = Utilities.getPlayerUUID(playerName);
@@ -23,27 +26,25 @@ public class PlaytimeForPlayer {
     public static Component getPlaytime(UUID uuid) {
         PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(uuid);
 
-        if (playtimePlayer == null) {
-            return MiniMessage.get().parse(Config.Messages.NO_PLAYTIME_STORED.getMessage());
-        }
+        if (playtimePlayer == null) return MiniMessage.get().parse(Config.Messages.NO_PLAYTIME_STORED.getMessage().replaceAll("%player%", Utilities.getPlayerName(uuid)));
 
         return MiniMessage.get().parse(buildMessage(playtimePlayer));
     }
 
     private static String buildMessage(PlaytimePlayer playtimePlayer) {
-        String header = Config.Messages.PLAYTIME_EXTENDED_FORMAT.getMessage();
-        String format = Config.Messages.PLAYTIME_EXTENDED_FORMAT.getMessage();
-        String footer = Config.Messages.PLAYTIME_EXTENDED_FORMAT_FOOTER.getMessage();
+        String header = Config.Messages.PLAYTIME_FORMAT_HEADER.getMessage();
+        String format = Config.Messages.PLAYTIME_FORMAT.getMessage();
+        String footer = Config.Messages.PLAYTIME_FORMAT_FOOTER.getMessage();
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(playtimePlayer.getUuid()))).append("\n");
 
         for (String server: Config.TRACKED_SERVERS) {
-            ServerPlaytime serverPlaytime = playtimePlayer.getPlaytimeOnServer(server);
-            if(serverPlaytime == null) continue;
-            long playtime = serverPlaytime.getPlaytime();
-            if (playtime == 0) continue;
-            stringBuilder.append(format.replaceAll("%server%", Utilities.capitalize(server)).replaceAll("%time%", Utilities.convertTime(playtime))).append("\n");
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, -30);
+            long time = Queries.getExtraPlaytime(playtimePlayer.getUuid(), calendar.getTimeInMillis(),  new Date().getTime());
+            if(time == 0) continue;
+            stringBuilder.append(format.replaceAll("%server%", Utilities.capitalize(server)).replaceAll("%time%", Utilities.convertTime(time))).append("\n");
         }
 
         stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(playtimePlayer.getTotalPlaytime())));

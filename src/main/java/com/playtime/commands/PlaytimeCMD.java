@@ -25,7 +25,7 @@ public class PlaytimeCMD {
         LiteralCommandNode<CommandSource> playtimeCommand = LiteralArgumentBuilder
                 .<CommandSource>literal("playtime")
                 .requires(ctx -> ctx.hasPermission("playtime.use"))
-                        .then(LiteralArgumentBuilder.literal("reload"))
+                .then(LiteralArgumentBuilder.literal("reload"))
                         .requires(ctx -> ctx.hasPermission("playtime.reload"))
                         .executes(context -> {
                             MiniMessage miniMessage = MiniMessage.get();
@@ -55,6 +55,27 @@ public class PlaytimeCMD {
                                     return 1;
                                 })
                         )
+                .then(LiteralArgumentBuilder.literal("extra"))
+                .requires(ctx -> ctx.hasPermission("playtime.extra"))
+                .then(RequiredArgumentBuilder.<CommandSource, String>argument("player", StringArgumentType.word())
+                        .suggests((context, builder) -> {
+                            Collection<String> possibleValues = new ArrayList<>();
+                            for (Player player : proxyServer.getAllPlayers()) {
+                                possibleValues.add(player.getGameProfile().getName());
+                            }
+                            if (possibleValues.isEmpty()) return Suggestions.empty();
+                            String remaining = builder.getRemaining().toLowerCase();
+                            for (String str : possibleValues) {
+                                if (str.toLowerCase().startsWith(remaining)) {
+                                    builder.suggest(StringArgumentType.escapeIfRequired(str));
+                                }
+                            }
+                            return builder.buildFuture();
+                        })
+                        .executes(context -> {
+                            return 1;
+                        })
+                )
                 .then(RequiredArgumentBuilder.<CommandSource, String>argument("player", StringArgumentType.word())
                         .requires(ctx -> ctx.hasPermission("playtime.use.other"))
                         .suggests((context, builder) -> {

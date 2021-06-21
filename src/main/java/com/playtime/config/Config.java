@@ -175,7 +175,7 @@ public final class Config {
         NO_PLAYTIME_SERVER("messages.no-playtime-server", "<red>%player% does not have any playtime on %server%.</red>"),
         PLAYER_NOT_FOUND("messages.player-not-found", "<red>%player% is not a valid player.</red>"),
         INVALID_SERVER("messages.invalid-server", "<red>%server% server does not exist.</red>"),
-        NO_PLAYTIME_STORED("messages.no-playtime-stored", "<red>%player% does not have any playtime stored in Plan.</red>"),
+        NO_PLAYTIME_STORED("messages.no-playtime-stored", "<red>%player% does not have any playtime stored.</red>"),
         INVALID_SET_COMMAND("messages.invalid-set-command", "<red>Invalid Usage. <gold>/playtime set <player> <server> <time></gold></red>"),
         PLAYER_TIME_CHANGE("messages.player-time-change", "<green>%player%'s time was successfully changed for %server%</green>", "<green>Oldtime âžœ %oldtime%</green>", "<green>NewTime âžœ %newtime%</green>"),
         INVALID_SEEN_COMMAND("messages.invalid-seen-command", "<red>Invalid Usage. <gold>/seen <player></gold></red>"),

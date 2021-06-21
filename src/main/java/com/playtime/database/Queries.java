@@ -192,4 +192,9 @@ public class Queries {
             exception.printStackTrace();
         }
     }
+
+    public static long getExtraPlaytime(UUID uuid, long min, long max) {
+
+        return 0;
+    }
 }

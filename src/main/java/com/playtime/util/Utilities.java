@@ -52,6 +52,10 @@ public class Utilities {
         User user = instance.getLuckPerms().getUserManager().getUser(uuid);
         return (user == null) ? uuid.toString() : user.getUsername();
     }
+
+    public static String capitalize(String string) {
+        return string.substring(0, 1).toUpperCase() + string.substring(1);
+    }
 //    public static String convertTime(int timeInMinutes) {
 //        int days = (int) TimeUnit.MINUTES.toDays(timeInMinutes);
 //        int hours = (int) (TimeUnit.MINUTES.toHours(timeInMinutes) - TimeUnit.DAYS.toHours(days));
