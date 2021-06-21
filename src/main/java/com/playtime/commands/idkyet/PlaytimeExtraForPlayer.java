@@ -42,7 +42,7 @@ public class PlaytimeExtraForPlayer {
         for (String server: Config.TRACKED_SERVERS) {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, -30);
-            long time = Queries.getExtraPlaytime(playtimePlayer.getUuid(), calendar.getTimeInMillis(),  new Date().getTime());
+            long time = Queries.getExtraPlaytime(server, playtimePlayer.getUuid(), calendar.getTimeInMillis(),  new Date().getTime());
             if(time == 0) continue;
             stringBuilder.append(format.replaceAll("%server%", Utilities.capitalize(server)).replaceAll("%time%", Utilities.convertTime(time))).append("\n");
         }
