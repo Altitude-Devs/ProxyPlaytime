@@ -5,14 +5,15 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import com.playtime.Playtime;
 import com.playtime.commands.idkyet.PlaytimeForPlayer;
+import com.playtime.config.Config;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,44 +25,61 @@ public class PlaytimeCMD {
         LiteralCommandNode<CommandSource> playtimeCommand = LiteralArgumentBuilder
                 .<CommandSource>literal("playtime")
                 .requires(ctx -> ctx.hasPermission("playtime.use"))
-                .then(RequiredArgumentBuilder
-                        .<CommandSource, String>argument("player", StringArgumentType.word())
+                        .then(LiteralArgumentBuilder.literal("reload"))
+                        .requires(ctx -> ctx.hasPermission("playtime.reload"))
+                        .executes(context -> {
+                            MiniMessage miniMessage = MiniMessage.get();
+                            context.getSource().sendMessage(miniMessage.parse("<red>Reloading config...</red>"));
+                            Config.reload();
+                            context.getSource().sendMessage(miniMessage.parse("<green>Config reloaded!</green>"));
+                            return 1;
+                        })
+                .then(LiteralArgumentBuilder.literal("set"))
+                        .requires(ctx -> ctx.hasPermission("playtime.set"))
+                        .then(RequiredArgumentBuilder.<CommandSource, String>argument("player", StringArgumentType.word())
+                                .suggests((context, builder) -> {
+                                    Collection<String> possibleValues = new ArrayList<>();
+                                    for (Player player : proxyServer.getAllPlayers()) {
+                                        possibleValues.add(player.getGameProfile().getName());
+                                    }
+                                    if (possibleValues.isEmpty()) return Suggestions.empty();
+                                    String remaining = builder.getRemaining().toLowerCase();
+                                    for (String str : possibleValues) {
+                                        if (str.toLowerCase().startsWith(remaining)) {
+                                            builder.suggest(StringArgumentType.escapeIfRequired(str));
+                                        }
+                                    }
+                                    return builder.buildFuture();
+                                })
+                                .executes(context -> {
+                                    return 1;
+                                })
+                        )
+                .then(RequiredArgumentBuilder.<CommandSource, String>argument("player", StringArgumentType.word())
                         .requires(ctx -> ctx.hasPermission("playtime.use.other"))
                         .suggests((context, builder) -> {
                             Collection<String> possibleValues = new ArrayList<>();
                             for (Player player : proxyServer.getAllPlayers()) {
                                 possibleValues.add(player.getGameProfile().getName());
                             }
-                            if(possibleValues.isEmpty()) return Suggestions.empty();
+                            if (possibleValues.isEmpty()) return Suggestions.empty();
                             String remaining = builder.getRemaining().toLowerCase();
                             for (String str : possibleValues) {
                                 if (str.toLowerCase().startsWith(remaining)) {
-                                    builder.suggest(str = StringArgumentType.escapeIfRequired(str));
+                                    builder.suggest(StringArgumentType.escapeIfRequired(str));
                                 }
                             }
                             return builder.buildFuture();
                         })
-                        .executes(commandContext -> {
-                            Optional<Player> playerOptional = proxyServer.getPlayer(commandContext.getArgument("player", String.class));
-                            if (playerOptional.isPresent()) {
-                                Playtime.getInstance().getLogger().info("Handling default playtime command send by: " + commandContext.getSource().toString()); //TODO debug
-                                execute(commandContext.getSource(), playerOptional.get());
-//                                Component playtime = PlaytimeForPlayer.getPlaytime(playerOptional.get().getUniqueId());
-//                                commandContext.getSource().sendMessage(playtime);
-                            } else {
-                                Playtime.getInstance().getLogger().info("Handling default playtime command send by: " + commandContext.getSource().toString()); //TODO debug
-                            }
+                        .executes(context -> {
+                            playtimeGet(proxyServer, context.getSource(), context.getArgument("player", String.class));
                             return 1;
                         })
                 )
-                .requires(commandSource ->  commandSource instanceof Player)
-                .executes(commandContext -> {
-                    execute(commandContext.getSource(), (Player) commandContext.getSource());
-//                    CommandSource source = commandContext.getSource();
-//                    Playtime.getInstance().getLogger().info("Handling default playtime command send by: " + source.toString()); //TODO debug
-//                    System.out.println(source);
-//                    Component playtime = PlaytimeForPlayer.getPlaytime(playerOptional.get().getUniqueId());
-//                    source.sendMessage(playtime);
+                .requires(commandSource -> commandSource instanceof Player)
+                .executes(context -> {
+                    Player player = (Player) context.getSource();
+                    playtimeGet(proxyServer, context.getSource(), player.getUsername());
                     return 1;
                 })
                 .build();
@@ -78,8 +96,16 @@ public class PlaytimeCMD {
         proxyServer.getCommandManager().register(meta, brigadierCommand);
     }
 
-    public void execute(CommandSource source, Player target) {
-        Component playtime = PlaytimeForPlayer.getPlaytime(target.getUniqueId());
+    public void playtimeGet(ProxyServer proxyServer, CommandSource source, String playerName) {
+        Optional<Player> playerOptional = proxyServer.getPlayer(playerName);
+        Component playtime;
+
+        if (playerOptional.isPresent()) {
+            playtime = PlaytimeForPlayer.getPlaytime(playerOptional.get().getUniqueId());
+        } else {
+            playtime = PlaytimeForPlayer.getPlaytime(playerName);
+        }
+
         source.sendMessage(playtime);
     }
 }

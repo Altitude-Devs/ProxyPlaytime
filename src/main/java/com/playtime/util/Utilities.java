@@ -1,5 +1,11 @@
 package com.playtime.util;
 
+import com.playtime.Playtime;
+import com.velocitypowered.api.proxy.Player;
+import net.luckperms.api.model.user.User;
+
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class Utilities {
@@ -22,9 +28,29 @@ public class Utilities {
         if (hours != 0) {
             stringBuilder.append(hours).append(hours == 1 ? " hour, " : " hours, ");
         }
-        stringBuilder.append(minutes).append(minutes == 1 ? " minute, " : "minutes, ");
+        stringBuilder.append(minutes).append(minutes == 1 ? " minute, " : " minutes, ");
 
-        return stringBuilder.toString();
+        return stringBuilder.substring(0, stringBuilder.length() - 2);
+    }
+
+    public static UUID getPlayerUUID(String playerName) {
+        Playtime instance = Playtime.getInstance();
+        Optional<Player> player = instance.getServer().getPlayer(playerName);
+
+        if (player.isPresent()) return player.get().getUniqueId();
+
+        User user = instance.getLuckPerms().getUserManager().getUser(playerName);
+        return (user == null) ? null : user.getUniqueId();
+    }
+
+    public static String getPlayerName(UUID uuid) {
+        Playtime instance = Playtime.getInstance();
+        Optional<Player> player = instance.getServer().getPlayer(uuid);
+
+        if (player.isPresent()) return player.get().getUsername();
+
+        User user = instance.getLuckPerms().getUserManager().getUser(uuid);
+        return (user == null) ? uuid.toString() : user.getUsername();
     }
 //    public static String convertTime(int timeInMinutes) {
 //        int days = (int) TimeUnit.MINUTES.toDays(timeInMinutes);

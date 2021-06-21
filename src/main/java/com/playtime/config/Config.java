@@ -72,6 +72,10 @@ public final class Config {
         }
     }
 
+    public static void reload() {
+        init(new File(CONFIG_FILE.getParent()));
+    }
+
     public static void readConfig(Class<?> clazz, Object instance) {
         for (Method method : clazz.getDeclaredMethods()) {
             if (Modifier.isPrivate(method.getModifiers())) {
@@ -160,24 +164,25 @@ public final class Config {
      **/
 
     public enum Messages {
-        PLAYTIME_FORMAT_HEADER("playtime-format-header", "&f&m-------&8[&m--&6 %player% playtime: &8&m--&8]&f&m-------"),
-        PLAYTIME_FORMAT("playtime-format", "&6%server%: %time%"),
-        PLAYTIME_FORMAT_FOOTER("playtime-format-footer", "&f&m------------", "&6Total: &f%total%", "&f&m--------------&8&m[--&r    &8&m--]&f&m--------------"),
-        PLAYTIME_EXTENDED_FORMAT_HEADER("playtime-extended-format-header", "&f&m-------&8[&m--&6 %player% playtime: &8&m--&8]&f&m-------"),
-        PLAYTIME_EXTENDED_FORMAT("playtime-extended-format", "&6%type%: %time%"),
-        PLAYTIME_EXTENDED_FORMAT_FOOTER("playtime-extended-format-footer", "&f&m--------------&8&m[--&r    &8&m--]&f&m--------------"),
-        NO_PERMISSION("messages.no-permission","&cYou do not have permission to do that command."),
-        NO_PLAYTIME_SERVER("messages.no-playtime-server", "&c%player% does not have any playtime on %server%."),
-        PLAYER_NOT_FOUND("messages.player-not-found", "&c%player% is not a valid player."),
-        INVALID_SERVER("messages.invalid-server", "&c%server% server does not exist."),
-        NO_PLAYTIME_STORED("messages.no-playtime-stored", "&c%player% does not have any playtime stored."),
-        INVALID_SET_COMMAND("messages.invalid-set-command", "&cInvalid Usage. /playtime set <player> <server> <time>"),
-        PLAYER_TIME_CHANGE("messages.player-time-change", "&a%player%'s time was successfully changed for %server%", "&aOldtime ➜ %oldtime%", "&aNewTime ➜ %newtime%"),
-        INVALID_SEEN_COMMAND("messages.invalid-seen-command", "&cInvalid Usage. /seen <player>"),
-        SEEN_FORMAT("messages.seen-format", "&fPlayer &6%player% &fhas been %online/offline% &ffor %time% on %server%."),
-        SEEN_ONLINE_FORMAT("messages.seen-online-format", "&aonline"),
-        SEEN_OFFLINE_FORMAT("messages.seen-offline-format", "&coffline"),
-        SEEN_TIME_NULL("messages.seen-time-null", "&cNo recorded time.");
+        PLAYTIME_FORMAT_HEADER("playtime-format-header", "<white><st>-------</st></white><dark_gray>[<st>--</st></dark_gray><gold> %player%'s playtime:</gold> <dark_gray><st>--</st>]</dark_gray><white><st>-------</white></st>"),
+        PLAYTIME_FORMAT("playtime-format", "<gold>%server%</gold>: %time%"),
+        PLAYTIME_FORMAT_FOOTER("playtime-format-footer", "<white><st>------------</st></white>", "<gold>Total</gold><white>: %total%</white>"
+                , "<white><st>--------------</st></white><dark_gray>[<st>--</st></dark_gray>    <dark_gray><st>--</st>]</dark_gray><white><st>--------------</st></white>"),
+        PLAYTIME_EXTENDED_FORMAT_HEADER("playtime-extended-format-header", "<white><st>-------</white></st><dark_gray>[<st>--</st></dark_gray><gold> %player%'s playtime:</gold> <dark_gray><st>--</st>]</dark_gray><white><st>-------</st></white>"),
+        PLAYTIME_EXTENDED_FORMAT("playtime-extended-format", "<gold>%type%</gold><white>: %time%</white>"),
+        PLAYTIME_EXTENDED_FORMAT_FOOTER("playtime-extended-format-footer", "<white><st>--------------</white></st><dark_gray>[<st>--</st></dark_gray>    <dark_gray><st>--</st>]</dark_gray><white><st>--------------</st></white>"),
+        NO_PERMISSION("messages.no-permission","<red>You do not have permission to do that command.</red>"),
+        NO_PLAYTIME_SERVER("messages.no-playtime-server", "<red>%player% does not have any playtime on %server%.</red>"),
+        PLAYER_NOT_FOUND("messages.player-not-found", "<red>%player% is not a valid player.</red>"),
+        INVALID_SERVER("messages.invalid-server", "<red>%server% server does not exist.</red>"),
+        NO_PLAYTIME_STORED("messages.no-playtime-stored", "<red>%player% does not have any playtime stored in Plan.</red>"),
+        INVALID_SET_COMMAND("messages.invalid-set-command", "<red>Invalid Usage. <gold>/playtime set <player> <server> <time></gold></red>"),
+        PLAYER_TIME_CHANGE("messages.player-time-change", "<green>%player%'s time was successfully changed for %server%</green>", "<green>Oldtime âžœ %oldtime%</green>", "<green>NewTime âžœ %newtime%</green>"),
+        INVALID_SEEN_COMMAND("messages.invalid-seen-command", "<red>Invalid Usage. <gold>/seen <player></gold></red>"),
+        SEEN_FORMAT("messages.seen-format", "<white>Player <gold>%player%</gold> has been %online/offline% for %time% on %server%.</white>"),
+        SEEN_ONLINE_FORMAT("messages.seen-online-format", "<green>online</green>"),
+        SEEN_OFFLINE_FORMAT("messages.seen-offline-format", "<red>offline</red>"),
+        SEEN_TIME_NULL("messages.seen-time-null", "<red>No recorded time.</red>");
 
         private final String key;
         private String message;

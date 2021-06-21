@@ -1,6 +1,5 @@
 package com.playtime.commands.idkyet;
 
-import com.playtime.Playtime;
 import com.playtime.config.Config;
 import com.playtime.database.Queries;
 import com.playtime.util.Utilities;
@@ -8,15 +7,17 @@ import com.playtime.util.objects.PlaytimePlayer;
 import com.playtime.util.objects.ServerPlaytime;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.luckperms.api.model.user.User;
 
 import java.util.UUID;
 
 public class PlaytimeForPlayer {
 
     public static Component getPlaytime(String playerName) {
-        UUID uuid = getPlayerUUID(playerName);
-        return getPlaytime(uuid);
+        UUID uuid = Utilities.getPlayerUUID(playerName);
+
+        if (uuid != null) return getPlaytime(uuid);
+
+        return MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
     }
 
     public static Component getPlaytime(UUID uuid) {
@@ -35,43 +36,18 @@ public class PlaytimeForPlayer {
         String footer = Config.Messages.PLAYTIME_FORMAT_FOOTER.getMessage();
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(header.replaceAll("%player%", getPlayerName(playtimePlayer.getUuid())));
+        stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(playtimePlayer.getUuid()))).append("\n");
 
-        for (String server: Config.TRACKED_SERVERS) { // could loop the ServerPlaytime objects and avoid NPE
+        for (String server: Config.TRACKED_SERVERS) {
             ServerPlaytime serverPlaytime = playtimePlayer.getPlaytimeOnServer(server);
             if(serverPlaytime == null) continue;
             long playtime = serverPlaytime.getPlaytime();
             if (playtime == 0) continue;
-            stringBuilder.append(format.replaceAll("%server%", server).replaceAll("%time%", Utilities.convertTime(playtime)));
+            stringBuilder.append(format.replaceAll("%server%", server).replaceAll("%time%", Utilities.convertTime(playtime))).append("\n");
         }
 
-        stringBuilder.append(footer.replaceAll("%total%", String.valueOf(playtimePlayer.getTotalPlaytime())));
+        stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(playtimePlayer.getTotalPlaytime())));
 
         return stringBuilder.toString();
-    }
-
-    private static UUID getPlayerUUID(String playerName) {
-        Playtime instance = Playtime.getInstance();
-        if (instance.getServer().getPlayer(playerName).isPresent()) {
-            instance.getServer().getPlayer(playerName).get().getUniqueId();
-        }
-
-        User user = instance.getLuckPerms().getUserManager().getUser(playerName);
-        if (user != null) {
-            return user.getUniqueId();
-        }
-        return null;
-    }
-
-    private static String getPlayerName(UUID uuid) {
-        Playtime instance = Playtime.getInstance();
-        if (instance.getServer().getPlayer(uuid).isPresent()) {
-            return instance.getServer().getPlayer(uuid).get().getUsername();
-        }
-        User user = instance.getLuckPerms().getUserManager().getUser(uuid);
-        if (user != null) {
-            return user.getUsername();
-        }
-        return uuid.toString();
     }
 }

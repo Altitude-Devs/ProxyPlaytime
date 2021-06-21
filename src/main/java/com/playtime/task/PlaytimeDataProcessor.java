@@ -15,9 +15,7 @@ import net.luckperms.api.model.user.User;
 import net.luckperms.api.track.Track;
 
 import java.sql.SQLException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +24,9 @@ public class PlaytimeDataProcessor implements Runnable{
     @Override
     public void run() {
         try {
-            for (PlaytimePlayer playtimePlayer : Maps.playtimePlayers.values()) {
+            Collection<PlaytimePlayer> playtimePlayers = Collections.unmodifiableCollection(Maps.playtimePlayers.values());
+
+            for (PlaytimePlayer playtimePlayer : playtimePlayers) {
                 if (!playtimePlayer.isOnline()) continue;
                 playtimePlayer.updateServerTime(false);
 
