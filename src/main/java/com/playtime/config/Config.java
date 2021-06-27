@@ -179,6 +179,7 @@ public final class Config {
         INVALID_SET_COMMAND("messages.invalid-set-command", "<red>Invalid Usage. <gold>/playtime set <player> <server> <time></gold></red>"),
         PLAYER_TIME_CHANGE("messages.player-time-change", "<green>%player%'s time was successfully changed for %server%</green>", "<green>Oldtime âžœ %oldtime%</green>", "<green>NewTime âžœ %newtime%</green>"),
         INVALID_EXTENDED_PLAYTIME_COMMAND("messages.playtime-extended-invalid-command", "<red>Invalid Usage. <gold>/playtime extra <player> [days]</gold></red>"),
+        INVALID_PLAYTIME_COPY_COMMAND("messages.playtime-copy-invalid-command", "<red>Invalid Usage. <gold>/playtime copy <player to copy from> <player to copy to></gold></red>"),
         INVALID_SEEN_COMMAND("messages.invalid-seen-command", "<red>Invalid Usage. <gold>/seen <player></gold></red>"),
         SEEN_FORMAT("messages.seen-format", "<white>Player <gold>%player%</gold> has been %online/offline% for %time% on %server%.</white>"),
         SEEN_ONLINE_FORMAT("messages.seen-online-format", "<green>online</green>"),
