@@ -43,7 +43,11 @@ public class PlaytimeDataProcessor implements Runnable{
 
     private void autoRank(PlaytimePlayer playtimePlayer) throws SQLException {
         Player player = getPlayer(playtimePlayer.getUuid());
-        if (player == null) return; //TODO some error
+
+        if (player == null) {
+            Playtime.getInstance().getLogger().warn("Unable to load player " + playtimePlayer.getUuid() + " during auto rank ");
+            return;
+        }
 
         User user = getLuckPermsUser(playtimePlayer.getUuid());
         String primaryGroup = user.getPrimaryGroup();
