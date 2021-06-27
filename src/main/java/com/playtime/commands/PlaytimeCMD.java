@@ -259,14 +259,14 @@ public class PlaytimeCMD implements Command {
 
     public void playtimeGet(ProxyServer proxyServer, CommandSource source, String playerName) {
         Optional<Player> playerOptional = proxyServer.getPlayer(playerName);
-        Component playtime;
+        Component message;
 
         if (playerOptional.isPresent()) {
-            playtime = PlaytimeForPlayer.getPlaytime(playerOptional.get().getUniqueId());
+            message = PlaytimeForPlayer.getPlaytime(playerOptional.get().getUniqueId());
         } else {
-            playtime = PlaytimeForPlayer.getPlaytime(playerName);
+            message = PlaytimeForPlayer.getPlaytime(playerName);
         }
 
-        source.sendMessage(playtime);
+        source.sendMessage(message);
     }
 }
