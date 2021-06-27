@@ -36,6 +36,10 @@ public class PlaytimePlayer {
         return uuid;
     }
 
+    public Date getCurrentSessionStart() {
+        return currentSessionStart;
+    }
+
     public void updateServerTime(boolean logout) {
         updateServerTime(new Date());
 
@@ -54,6 +58,7 @@ public class PlaytimePlayer {
 
         if (currentServer.isEmpty()) {
             currentServer = server;
+            Maps.playtimeSeen.put(uuid, new PlaytimeSeen(uuid, currentServer, System.currentTimeMillis()));
             lastSavedServerTime = currentTime;
             return;
         }
@@ -83,7 +88,7 @@ public class PlaytimePlayer {
         playtimePerServer.put(currentServer, serverPlaytime);
         if (!toUpdateServers.contains(currentServer)) toUpdateServers.add(currentServer);
         lastSavedServerTime = currentTime;
-        Maps.playtimeSeen.put(uuid, new PlaytimeSeen(uuid, currentServer, System.currentTimeMillis())); //Save last seen in cache
+//        Maps.playtimeSeen.put(uuid, new PlaytimeSeen(uuid, currentServer, System.currentTimeMillis())); //Save last seen in cache
     }
 
     public ServerPlaytime getPlaytimeOnServer(String server) {
@@ -102,6 +107,7 @@ public class PlaytimePlayer {
         Date currentTime = new Date();
 
         toUpdateSessions.add(new ServerSession(currentServer, currentSessionStart.getTime(), currentTime.getTime()));
+        Maps.playtimeSeen.put(uuid, new PlaytimeSeen(uuid, currentServer, System.currentTimeMillis()));
 
         currentSessionStart = currentTime;
     }

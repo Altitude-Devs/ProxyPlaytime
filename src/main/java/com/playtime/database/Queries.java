@@ -107,20 +107,19 @@ public class Queries {
         return null;
     }
 
-    public static PlaytimeSeen getLastSeen(Player player) {
-        UUID uuid = player.getUniqueId();
+    public static PlaytimeSeen getLastSeen(UUID uuid) {
         if (Maps.playtimeSeen.containsKey(uuid)) {
             return Maps.playtimeSeen.get(uuid);
         }
 
         try {
-            PreparedStatement statement = DatabaseManager.getConnection().prepareStatement("SELECT server, last_seen FROM playtime WHERE uuid = ? ORDER BY last_seen DESC LIMIT 1");
+            PreparedStatement statement = DatabaseManager.getConnection().prepareStatement("SELECT server_name, last_seen FROM playtime WHERE uuid = ? ORDER BY last_seen DESC LIMIT 1");
             statement.setString(1, uuid.toString());
 
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                PlaytimeSeen playtimeSeen = new PlaytimeSeen(uuid, resultSet.getString("server"), resultSet.getLong("last_seen"));
+                PlaytimeSeen playtimeSeen = new PlaytimeSeen(uuid, resultSet.getString("server_name"), resultSet.getLong("last_seen"));
                 Maps.playtimeSeen.put(uuid, playtimeSeen);
                 return playtimeSeen;
             }

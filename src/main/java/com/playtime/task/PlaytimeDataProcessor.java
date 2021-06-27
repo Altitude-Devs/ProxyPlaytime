@@ -16,6 +16,7 @@ import net.luckperms.api.track.Track;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -24,14 +25,11 @@ public class PlaytimeDataProcessor implements Runnable{
     @Override
     public void run() {
         try {
-            Collection<PlaytimePlayer> playtimePlayers = Collections.unmodifiableCollection(Maps.playtimePlayers.values());
+            CopyOnWriteArrayList<PlaytimePlayer> playtimePlayers = new CopyOnWriteArrayList<>(Maps.playtimePlayers.values());
 
             for (PlaytimePlayer playtimePlayer : playtimePlayers) {
                 if (!playtimePlayer.isOnline()) continue;
                 playtimePlayer.updateServerTime(false);
-
-                PlaytimeSeen playtimeSeen = Maps.playtimeSeen.get(playtimePlayer.getUuid());
-                playtimeSeen.setLastSeen(playtimeSeen.getServer(), System.currentTimeMillis());
 
                 autoRank(playtimePlayer);
             }

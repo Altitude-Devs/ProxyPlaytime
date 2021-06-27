@@ -2,6 +2,7 @@ package com.playtime;
 
 import com.google.inject.Inject;
 import com.playtime.commands.PlaytimeCMD;
+import com.playtime.commands.SeenCMD;
 import com.playtime.commands.idkyet.PlaytimeForPlayer;
 import com.playtime.config.Config;
 import com.playtime.database.DatabaseManager;
@@ -73,6 +74,7 @@ public class Playtime { //TODO only track playtime on servers in config
         server.getEventManager().register(instance, new LogoutEvent());
 
         server.getCommandManager().register(new PlaytimeCMD(server), "playtime", "pt");
+        server.getCommandManager().register(new SeenCMD(server), "seen");
 //        new PlaytimeCMD().createPlaytimeCommand(server);
     }
 
