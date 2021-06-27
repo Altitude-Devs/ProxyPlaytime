@@ -4,8 +4,11 @@ import com.playtime.Playtime;
 import com.velocitypowered.api.proxy.Player;
 import net.luckperms.api.model.user.User;
 
+import javax.print.DocFlavor;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class Utilities {
@@ -40,7 +43,18 @@ public class Utilities {
         if (player.isPresent()) return player.get().getUniqueId();
 
         User user = instance.getLuckPerms().getUserManager().getUser(playerName);
-        return (user == null) ? null : user.getUniqueId();
+
+        if (user != null) {
+            return user.getUniqueId();
+        }
+
+        try {
+            return instance.getLuckPerms().getUserManager().lookupUniqueId(playerName).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static String getPlayerName(UUID uuid) {
@@ -50,7 +64,18 @@ public class Utilities {
         if (player.isPresent()) return player.get().getUsername();
 
         User user = instance.getLuckPerms().getUserManager().getUser(uuid);
-        return (user == null) ? uuid.toString() : user.getUsername();
+
+        if (user != null) {
+            return user.getUsername();
+        }
+
+        try {
+            return instance.getLuckPerms().getUserManager().lookupUsername(uuid).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return uuid.toString();
     }
 
     public static String capitalize(String string) {
