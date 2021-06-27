@@ -5,7 +5,6 @@ import com.playtime.database.Queries;
 import com.playtime.maps.Maps;
 import com.playtime.util.objects.Groups;
 import com.playtime.util.objects.PlaytimePlayer;
-import com.playtime.util.objects.PlaytimeSeen;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;

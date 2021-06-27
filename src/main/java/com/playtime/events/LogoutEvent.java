@@ -1,6 +1,5 @@
 package com.playtime.events;
 
-import com.playtime.Playtime;
 import com.playtime.maps.Maps;
 import com.playtime.util.objects.PlaytimePlayer;
 import com.velocitypowered.api.event.Subscribe;
