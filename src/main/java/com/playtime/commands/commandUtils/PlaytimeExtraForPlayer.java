@@ -1,4 +1,4 @@
-package com.playtime.commands.idkyet;
+package com.playtime.commands.commandUtils;
 
 import com.playtime.config.Config;
 import com.playtime.database.Queries;

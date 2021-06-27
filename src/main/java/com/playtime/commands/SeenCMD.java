@@ -1,13 +1,12 @@
 package com.playtime.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.playtime.commands.idkyet.SeenPlayer;
+import com.playtime.commands.commandUtils.SeenPlayer;
 import com.playtime.config.Config;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
