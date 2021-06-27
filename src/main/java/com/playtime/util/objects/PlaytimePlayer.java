@@ -44,7 +44,6 @@ public class PlaytimePlayer {
         updateServerTime(new Date());
 
         if (logout) {
-            Playtime.getInstance().getLogger().info("Handling logged out player: " + uuid); //TODO debug
             saveSession();
             currentServer = "";
             online = false;
@@ -75,7 +74,6 @@ public class PlaytimePlayer {
         ServerPlaytime serverPlaytime;
         long unsavedTime = currentTime.getTime() - lastSavedServerTime.getTime();
 
-        Playtime.getInstance().getLogger().info("Updating player time on server: " + currentServer + " for player: " + uuid); //TODO debug
         if (playtimePerServer.containsKey(currentServer)) {
             serverPlaytime = playtimePerServer.get(currentServer);
             serverPlaytime.addPlaytime(unsavedTime);
@@ -88,7 +86,6 @@ public class PlaytimePlayer {
         playtimePerServer.put(currentServer, serverPlaytime);
         if (!toUpdateServers.contains(currentServer)) toUpdateServers.add(currentServer);
         lastSavedServerTime = currentTime;
-//        Maps.playtimeSeen.put(uuid, new PlaytimeSeen(uuid, currentServer, System.currentTimeMillis())); //Save last seen in cache
     }
 
     public ServerPlaytime getPlaytimeOnServer(String server) {

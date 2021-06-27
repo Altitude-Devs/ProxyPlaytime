@@ -24,9 +24,7 @@ public class LogoutTracker {
                 iterator.remove();
                 return;
             }
-            Playtime.getInstance().getLogger().info("Handling logout queue for player: " + playtimePlayer.getUuid()); //TODO debug
             if (playtimePlayer.getLastSavedServerTime().before(calendar.getTime())) {
-                Playtime.getInstance().getLogger().info("Removing player: " + playtimePlayer.getUuid() + " from the cache"); //TODO debug
                 Maps.playtimePlayers.remove(playtimePlayer.getUuid());
                 iterator.remove();
                 Queries.updatePlaytime(playtimePlayer);
