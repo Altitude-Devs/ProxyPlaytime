@@ -43,7 +43,7 @@ public class PlaytimeDataProcessor implements Runnable{
     private void autoRank(PlaytimePlayer playtimePlayer) throws SQLException {
         Player player = getPlayer(playtimePlayer.getUuid());
 
-        if (player == null) {
+        if (player == null) { //TODO figure out why this can happen and how to stop it
             Playtime.getInstance().getLogger().warn("Unable to load player " + playtimePlayer.getUuid() + " during auto rank ");
             return;
         }

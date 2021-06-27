@@ -8,6 +8,8 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.playtime.commands.commandUtils.PlaytimeExtraForPlayer;
 import com.playtime.commands.commandUtils.PlaytimeForPlayer;
 import com.playtime.config.Config;
+import com.playtime.database.Queries;
+import com.playtime.util.Utilities;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandMeta;
@@ -52,11 +54,44 @@ public class PlaytimeCMD implements Command {
                 Config.reload();
                 source.sendMessage(miniMessage.parse("<green>Config reloaded!</green>"));
                 break;
-            case "set":
-                if (!source.hasPermission("playtime.set")) {
+            case "move":
+                if (!source.hasPermission("playtime.move")) {
                     source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
                     break;
                 }
+
+                if (args.length != 4 || !args[1].matches("[a-zA-Z0-9_]{3,16}") || !args[2].matches("[a-zA-Z0-9_]{3,16}") || args[1].equalsIgnoreCase(args[2])) {
+                    source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_PLAYTIME_MOVE_COMMAND.getMessage()));
+                    break;
+                }
+                boolean set;
+                if (args[3].equalsIgnoreCase("add")) {
+                    set = false;
+                } else if (args[3].equalsIgnoreCase("set")) {
+                    set = true;
+                } else {
+                    source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_PLAYTIME_MOVE_COMMAND.getMessage()));
+                    break;
+                }
+
+                UUID playerFrom = Utilities.getPlayerUUID(args[1]);
+                UUID playerTo = Utilities.getPlayerUUID(args[2]);
+
+                if (playerFrom == null) {
+                    source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[1])));
+                    return;
+                }
+                if (playerTo == null) {
+                    source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[2])));
+                    return;
+                }
+
+                boolean success = Queries.movePlaytime(playerFrom, playerTo, set);
+
+                source.sendMessage(MiniMessage.get().parse(
+                        (success ? Config.Messages.MOVED_PLAYTIME.getMessage() : Config.Messages.FAILED_MOVED_PLAYTIME.getMessage())
+                                .replaceAll("%playerFrom%", Utilities.getPlayerName(playerFrom))
+                                .replaceAll("%playerTo%", Utilities.getPlayerName(playerTo))));
                 break;
             case "extra":
                 if (!source.hasPermission("playtime.extra")) {
@@ -115,7 +150,7 @@ public class PlaytimeCMD implements Command {
             case 1: {
                 List<String> possibleValues = new ArrayList<>();
 
-                if (source.hasPermission("playtime.set")) possibleValues.add("set");
+                if (source.hasPermission("playtime.move")) possibleValues.add("move");
                 if (source.hasPermission("playtime.reload")) possibleValues.add("reload");
                 if (source.hasPermission("playtime.extra")) possibleValues.add("extra");
 
@@ -131,8 +166,8 @@ public class PlaytimeCMD implements Command {
             }
             case 2: {
                 switch (currentArgs[0].toLowerCase()) {
-                    case "set":
-                        if (!source.hasPermission("playtime.set")) return null;
+                    case "move":
+                        if (!source.hasPermission("playtime.move")) return null;
                     case "extra":
                         if (currentArgs[0].equalsIgnoreCase("extra") && !source.hasPermission("playtime.extra")) return null;
 
@@ -143,6 +178,26 @@ public class PlaytimeCMD implements Command {
                         }
 
                         return finalizeSuggest(possibleValues, currentArgs[1].toLowerCase());
+                }
+            }
+            case 3: {
+                if (currentArgs[0].equalsIgnoreCase("move") && source.hasPermission("playtime.move")) {
+                    List<String> possibleValues = new ArrayList<>();
+
+                    for (Player player : proxyServer.getAllPlayers()) {
+                        possibleValues.add(player.getGameProfile().getName());
+                    }
+
+                    return finalizeSuggest(possibleValues, currentArgs[2].toLowerCase());
+                }
+            }
+            case 4: {
+                if (currentArgs[0].equalsIgnoreCase("move") && source.hasPermission("playtime.move")) {
+                    List<String> possibleValues = new ArrayList<>();
+                    possibleValues.add("add");
+                    possibleValues.add("set");
+
+                    return finalizeSuggest(possibleValues, currentArgs[3]);
                 }
             }
         }

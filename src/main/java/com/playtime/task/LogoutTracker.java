@@ -1,5 +1,5 @@
 package com.playtime.task;
-=
+
 import com.playtime.config.Config;
 import com.playtime.database.Queries;
 import com.playtime.maps.Maps;

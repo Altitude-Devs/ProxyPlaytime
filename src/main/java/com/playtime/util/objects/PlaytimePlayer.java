@@ -14,7 +14,7 @@ public class PlaytimePlayer {
     private long totalPlaytime;
     private String currentServer;
     private Date currentSessionStart;
-    private Date lastSavedServerTime;
+    private Date lastSavedServerTime; //TODO check what it's used for and if i use it correctly in the constructor
     private final ConcurrentLinkedQueue<ServerSession> toUpdateSessions;
     private final ConcurrentLinkedQueue<String> toUpdateServers;
 
@@ -29,6 +29,7 @@ public class PlaytimePlayer {
         this.currentSessionStart = new Date();
         this.toUpdateSessions = new ConcurrentLinkedQueue<>();
         this.toUpdateServers = new ConcurrentLinkedQueue<>();
+        this.lastSavedServerTime = currentSessionStart;
     }
 
     public UUID getUuid() {

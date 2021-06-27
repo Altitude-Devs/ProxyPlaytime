@@ -52,13 +52,11 @@ public class DatabaseManager {
 
     private static void createPlaytimeTable() {
         String sql = "CREATE TABLE IF NOT EXISTS playtime (" +
-                "id INT NOT NULL AUTO_INCREMENT, " +
                 "uuid VARCHAR(36) NOT NULL, " +
                 "server_name VARCHAR(32) NOT NULL, " +
                 "playtime BIGINT(19) NOT NULL, " +
                 "last_seen BIGINT(19) DEFAULT 0, " +
-                "PRIMARY KEY(id), " +
-                "CONSTRAINT pt_entry_unique UNIQUE(uuid, server_name)" +
+                "PRIMARY KEY(uuid, server_name)" +
                 ");";
         try {
             Statement statement = getConnection().createStatement();

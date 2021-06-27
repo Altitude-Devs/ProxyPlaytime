@@ -192,6 +192,61 @@ public class Queries {
         }
     }
 
+    public static boolean movePlaytime(UUID uuidFrom, UUID uuidTo, boolean set) {
+        savePlayerTime(uuidFrom);
+        savePlayerTime(uuidTo);
+
+//INSERT INTO playtime (uuid, server_name, playtime, last_seen) VALUES ('14904acd-d538-426c-ac56-3863311b133c', 'valley', 500000, 0) ON DUPLICATE KEY UPDATE playtime = playtime + 50000, last_seen = 0
+        String sqlSelect = "SELECT uuid, server_name, playtime, last_seen FROM playtime WHERE uuid = ?";
+        String sqlInsert = "INSERT INTO playtime (uuid, server_name, playtime, last_seen) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE playtime = " + (set ? "" : "playtime + ") + "?, last_seen = ?";
+
+        try {
+            PreparedStatement statementSelect = DatabaseManager.getConnection().prepareStatement(sqlSelect);
+            statementSelect.setString(1, uuidFrom.toString());
+
+            ResultSet resultSet = statementSelect.executeQuery();
+
+            PreparedStatement statementInsert = DatabaseManager.getConnection().prepareStatement(sqlInsert);
+
+            while (resultSet.next()) {
+                long playtime = resultSet.getLong("playtime");
+                long last_seen = resultSet.getLong("last_seen");
+                statementInsert.setString(1, uuidTo.toString());
+                statementInsert.setString(2, resultSet.getString("server_name"));
+                statementInsert.setLong(3, playtime);
+                statementInsert.setLong(4, last_seen);
+                statementInsert.setLong(5, playtime);
+                statementInsert.setLong(6, last_seen);
+
+                statementInsert.addBatch();
+            }
+
+            int[] ints = statementInsert.executeBatch();
+
+            syncPlayerTime(uuidFrom);
+            syncPlayerTime(uuidTo);
+
+            return ints.length != 0;
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+
+        return false;
+    }
+
+    private static void savePlayerTime(UUID uuid) {
+        if (Maps.playtimePlayers.containsKey(uuid)) {
+            updatePlaytime(Maps.playtimePlayers.get(uuid));
+        }
+    }
+
+    private static void syncPlayerTime(UUID uuid) {
+        if (Maps.playtimePlayers.containsKey(uuid)) {
+            Maps.playtimePlayers.remove(uuid);
+            Maps.playtimePlayers.put(uuid, getPlaytimePlayer(uuid));
+        }
+    }
+
     public static long getExtraPlaytime(String server, UUID uuid, long min, long max) {
         String sql = "SELECT session_start, session_end FROM sessions " +
                 "WHERE uuid = ? AND server_name = ? AND session_start > ? AND session_end < ?";
