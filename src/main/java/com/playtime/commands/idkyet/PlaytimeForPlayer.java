@@ -31,9 +31,9 @@ public class PlaytimeForPlayer {
     }
 
     private static String buildMessage(PlaytimePlayer playtimePlayer) {
-        String header = Config.Messages.PLAYTIME_EXTENDED_FORMAT.getMessage();
-        String format = Config.Messages.PLAYTIME_EXTENDED_FORMAT.getMessage();
-        String footer = Config.Messages.PLAYTIME_EXTENDED_FORMAT_FOOTER.getMessage();
+        String header = Config.Messages.PLAYTIME_FORMAT_HEADER.getMessage();
+        String format = Config.Messages.PLAYTIME_FORMAT.getMessage();
+        String footer = Config.Messages.PLAYTIME_FORMAT_FOOTER.getMessage();
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(playtimePlayer.getUuid()))).append("\n");

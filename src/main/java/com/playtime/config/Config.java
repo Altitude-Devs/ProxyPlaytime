@@ -168,8 +168,8 @@ public final class Config {
         PLAYTIME_FORMAT("playtime-format", "<gold>%server%</gold>: %time%"),
         PLAYTIME_FORMAT_FOOTER("playtime-format-footer", "<white><st>------------</st></white>", "<gold>Total</gold><white>: %total%</white>"
                 , "<white><st>--------------</st></white><dark_gray>[<st>--</st></dark_gray>    <dark_gray><st>--</st>]</dark_gray><white><st>--------------</st></white>"),
-        PLAYTIME_EXTENDED_FORMAT_HEADER("playtime-extended-format-header", "<white><st>-------</white></st><dark_gray>[<st>--</st></dark_gray><gold> %player%'s playtime:</gold> <dark_gray><st>--</st>]</dark_gray><white><st>-------</st></white>"),
-        PLAYTIME_EXTENDED_FORMAT("playtime-extended-format", "<gold>%type%</gold><white>: %time%</white>"),
+        PLAYTIME_EXTENDED_FORMAT_HEADER("playtime-extended-format-header", "<white><st>-------</white></st><dark_gray>[<st>--</st></dark_gray><gold> %player%'s playtime in the last %time% days:</gold> <dark_gray><st>--</st>]</dark_gray><white><st>-------</st></white>"),
+        PLAYTIME_EXTENDED_FORMAT("playtime-extended-format", "<gold>%server%</gold><white>: %time%</white>"),
         PLAYTIME_EXTENDED_FORMAT_FOOTER("playtime-extended-format-footer", "<white><st>--------------</white></st><dark_gray>[<st>--</st></dark_gray>    <dark_gray><st>--</st>]</dark_gray><white><st>--------------</st></white>"),
         NO_PERMISSION("messages.no-permission","<red>You do not have permission to do that command.</red>"),
         NO_PLAYTIME_SERVER("messages.no-playtime-server", "<red>%player% does not have any playtime on %server%.</red>"),
@@ -178,6 +178,7 @@ public final class Config {
         NO_PLAYTIME_STORED("messages.no-playtime-stored", "<red>%player% does not have any playtime stored.</red>"),
         INVALID_SET_COMMAND("messages.invalid-set-command", "<red>Invalid Usage. <gold>/playtime set <player> <server> <time></gold></red>"),
         PLAYER_TIME_CHANGE("messages.player-time-change", "<green>%player%'s time was successfully changed for %server%</green>", "<green>Oldtime âžœ %oldtime%</green>", "<green>NewTime âžœ %newtime%</green>"),
+        INVALID_EXTENDED_PLAYTIME_COMMAND("messages.playtime-extended-invalid-command", "<red>Invalid Usage. <gold>/playtime extra <player> [days]</gold></red>"),
         INVALID_SEEN_COMMAND("messages.invalid-seen-command", "<red>Invalid Usage. <gold>/seen <player></gold></red>"),
         SEEN_FORMAT("messages.seen-format", "<white>Player <gold>%player%</gold> has been %online/offline% for %time% on %server%.</white>"),
         SEEN_ONLINE_FORMAT("messages.seen-online-format", "<green>online</green>"),

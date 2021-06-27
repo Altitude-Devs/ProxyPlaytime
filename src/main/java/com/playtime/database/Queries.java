@@ -194,21 +194,30 @@ public class Queries {
     }
 
     public static long getExtraPlaytime(String server, UUID uuid, long min, long max) {
-        String sql = "SELECT ?, playtime FROM sessions " +
+        String sql = "SELECT session_start, session_end FROM sessions " +
                 "WHERE uuid = ? AND server_name = ? AND session_start > ? AND session_end < ?";
 
         try {
             PreparedStatement statement = DatabaseManager.getConnection().prepareStatement(sql);
 
-            statement.setString(1, server);
-            statement.setString(2, uuid.toString());
-            statement.setString(3, server);
-            statement.setLong(4, min);
-            statement.setLong(5, max);
+            statement.setString(1, uuid.toString());
+            statement.setString(2, server);
+            statement.setLong(3, min);
+            statement.setLong(4, max);
+
+            return calculateSessionTime(statement.executeQuery());
 
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
         return 0;
+    }
+
+    private static long calculateSessionTime(ResultSet resultSet) throws SQLException {
+        long totalSessionTime = 0;
+        while (resultSet.next()) {
+            totalSessionTime += resultSet.getLong("session_end") - resultSet.getLong("session_start");
+        }
+        return totalSessionTime;
     }
 }
