@@ -101,6 +101,7 @@ public class PlaytimeCMD implements Command {
                 }
                 if (!args[0].matches("[a-zA-Z0-9_]{3,16}")) {
                     source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[0])));
+                    return;
                 }
                 playtimeGet(proxyServer, source, args[0]);
         }
