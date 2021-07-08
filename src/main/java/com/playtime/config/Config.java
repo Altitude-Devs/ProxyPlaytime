@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -70,6 +69,7 @@ public final class Config {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        loadConfig();
     }
 
     public static void reload() {
@@ -168,7 +168,7 @@ public final class Config {
         PLAYTIME_FORMAT("playtime-format", "<gold>%server%</gold>: %time%"),
         PLAYTIME_FORMAT_FOOTER("playtime-format-footer", "<white><st>------------</st></white>", "<gold>Total</gold><white>: %total%</white>"
                 , "<white><st>--------------</st></white><dark_gray>[<st>--</st></dark_gray>    <dark_gray><st>--</st>]</dark_gray><white><st>--------------</st></white>"),
-        PLAYTIME_EXTENDED_FORMAT_HEADER("playtime-extended-format-header", "<white><st>-------</white></st><dark_gray>[<st>--</st></dark_gray><gold> %player%'s playtime in the last %time% days:</gold> <dark_gray><st>--</st>]</dark_gray><white><st>-------</st></white>"),
+        PLAYTIME_EXTENDED_FORMAT_HEADER("playtime-extended-format-header", "<white><st>-------</white></st><dark_gray>[<st>--</st></dark_gray><gold> %player%'s playtime %time%:</gold> <dark_gray><st>--</st>]</dark_gray><white><st>-------</st></white>"),
         PLAYTIME_EXTENDED_FORMAT("playtime-extended-format", "<gold>%server%</gold><white>: %time%</white>"),
         PLAYTIME_EXTENDED_FORMAT_FOOTER("playtime-extended-format-footer", "<white><st>--------------</white></st><dark_gray>[<st>--</st></dark_gray>    <dark_gray><st>--</st>]</dark_gray><white><st>--------------</st></white>"),
         NO_PERMISSION("messages.no-permission","<red>You do not have permission to do that command.</red>"),
@@ -179,7 +179,7 @@ public final class Config {
         INVALID_SET_COMMAND("messages.invalid-set-command", "<red>Invalid Usage. <gold>/playtime set <player> <server> <time></gold></red>"),
         MOVED_PLAYTIME("messages.moved-playtime", "<green>%playerFrom%'s time was successfully moved to %playerTo%'s</green>"),
         FAILED_MOVED_PLAYTIME("messages.failed-moved-playtime", "<red>Unable to move %playerFrom%'s time to %playerTo%</red>"),
-        INVALID_EXTENDED_PLAYTIME_COMMAND("messages.playtime-extended-invalid-command", "<red>Invalid Usage. <gold>/playtime extra <player> [days]</gold></red>"),
+        INVALID_EXTENDED_PLAYTIME_COMMAND("messages.playtime-extended-invalid-command", "<red>Invalid Usage. <gold>/playtime extra <player> <day/week> [amount]</gold></red>"),
         INVALID_PLAYTIME_MOVE_COMMAND("messages.playtime-move-invalid-command", "<red>Invalid Usage. <gold>/playtime move <player to move from> <player to move to> <add/set></gold></red>"),
         INVALID_SEEN_COMMAND("messages.invalid-seen-command", "<red>Invalid Usage. <gold>/seen <player></gold></red>"),
         SEEN_FORMAT("messages.seen-format", "<white>Player <gold>%player%</gold> has been %online/offline% for %time% on %server%.</white>"),
@@ -226,17 +226,17 @@ public final class Config {
 
         String path = "groups";
         ConfigurationNode node = getNode(path);
-        List<? extends ConfigurationNode> childrenList = node.getChildrenList();
+        Map<Object, ? extends ConfigurationNode> childrenMap = node.getChildrenMap();
 
-        for (ConfigurationNode configurationNode : childrenList) {
+        for (ConfigurationNode configurationNode : childrenMap.values()) {
             String groupName = (String) configurationNode.getKey();
             String subPath = path + "." + groupName + ".";
             int timeRequired = getInt(subPath + "requirement", -1);
-            String rankUpCommand = getString(subPath + "rank-up-command", "");
+            String track = getString(subPath + "track", "");
             String broadcastMessage = getString(subPath + "broadcast-message", "");
             String playerTitleMessage = getString(subPath + "player-title-message", "");
 
-            Maps.groups.put(groupName, new Groups(groupName, timeRequired, rankUpCommand, broadcastMessage, playerTitleMessage));
+            Maps.groups.put(groupName, new Groups(groupName, timeRequired, track, broadcastMessage, playerTitleMessage));
         }
     }
 
@@ -256,7 +256,6 @@ public final class Config {
         PASSWORD = getString("database.password", PASSWORD);
     }
 
-    public static boolean TRACK_TIME = false;
     public static long AUTO_SAVE = 5;
     public static long AUTO_RANK = 5;
     public static String SERVER_DISPLAY_NAME = "";
@@ -264,10 +263,56 @@ public final class Config {
     public static ArrayList<String> TRACKED_SERVERS = new ArrayList<>();
 
     private static void loadConfig() {
-        TRACK_TIME = getBoolean("tracktime", false);
-        AUTO_SAVE = getLong("auto-save", 1L);
-        AUTO_RANK = getLong("auto-rank", 1L);
+        AUTO_SAVE = getLong("auto-save", 5L);
+        AUTO_RANK = getLong("auto-rank", 5L);
         SERVER_DISPLAY_NAME = getString("server", "");
         TRACKED_SERVERS.addAll(getList("tracked-servers", Arrays.asList("Server1", "Server2")));
+
+        loadGroups();
+        loadSeenServers();
+        loadMessages();
     }
+
+    //groups:
+    //  default:
+    //    requirement: 120
+    //    rank-up-command: "lp user %player% promote default"
+    //    broadcast-message: "<dark_blue>* %player% has ranked up to Nomad!</dark_blue>"
+    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Nomad</white>"
+    //  nomad:
+    //    requirement: 1440
+    //    commands:
+    //    rank-up-command: "lp user %player% promote default"
+    //    broadcast-message: "<dark_blue>* %player% has ranked up to Peddler!</dark_blue>"
+    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Peddler</white>"
+    //  peddler:
+    //    requirement: 4320
+    //    commands:
+    //    rank-up-command: "lp user %player% promote default"
+    //    broadcast-message: "<dark_blue>* %player% has ranked up to Settler!</dark_blue>"
+    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Settler</white>"
+    //  settler:
+    //    requirement: 10080
+    //    commands:
+    //    rank-up-command: "lp user %player% promote default"
+    //    broadcast-message: "<dark_blue>* %player% has ranked up to Resident!</dark_blue>"
+    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Resident</white>"
+    //  resident:
+    //    requirement: 20160
+    //    commands:
+    //    rank-up-command: "lp user %player% promote default"
+    //    broadcast-message: "<dark_blue>* %player% has ranked up to Esquire!</dark_blue>"
+    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Esquire</white>"
+    //  esquire:
+    //    requirement: 43200
+    //    commands:
+    //    rank-up-command: "lp user %player% promote default"
+    //    broadcast-message: "<dark_blue>* %player% has ranked up to Knight!</dark_blue>"
+    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Knight</white>"
+    //  knight:
+    //    requirement: 86400
+    //    commands:
+    //    rank-up-command: "lp user %player% promote default"
+    //    broadcast-message: "<dark_blue>* %player% has ranked up to Baron!</dark_blue>"
+    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Baron</white>"
 }

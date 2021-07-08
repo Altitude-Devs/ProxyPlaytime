@@ -3,15 +3,15 @@ package com.playtime.util.objects;
 public class Groups {
     private final String groupName;
     private final int timeRequired;
-    private final String rankUpCommand;
+    private final String track;
     private final String broadcastMessage;
     private final String playerTitleMessage;
 
 
-    public Groups(String groupName, int timeRequired, String rankUpCommand, String broadcastMessage, String playerTitleMessage) {
+    public Groups(String groupName, int timeRequired, String track, String broadcastMessage, String playerTitleMessage) {
         this.groupName = groupName;
         this.timeRequired = timeRequired;
-        this.rankUpCommand = rankUpCommand;
+        this.track = track;
         this.broadcastMessage = broadcastMessage;
         this.playerTitleMessage = playerTitleMessage;
     }
@@ -24,8 +24,8 @@ public class Groups {
         return timeRequired;
     }
 
-    public String getRankUpCommand() {
-        return rankUpCommand;
+    public String getTrack() {
+        return track;
     }
 
     public String getBroadcastMessage() {

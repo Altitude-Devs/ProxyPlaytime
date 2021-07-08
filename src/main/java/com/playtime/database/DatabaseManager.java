@@ -31,7 +31,7 @@ public class DatabaseManager {
             }
 
             connection = DriverManager.getConnection(
-                    "jdbc:" + Config.DRIVER + "://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE, Config.USERNAME,
+                    "jdbc:" + Config.DRIVER + "://" + Config.IP + ":" + Config.PORT + "/" + Config.DATABASE + "?useSSL=false", Config.USERNAME,
                     Config.PASSWORD);
         } catch (SQLException e) {
             e.printStackTrace();

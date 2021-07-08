@@ -3,8 +3,8 @@ package com.playtime.commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.playtime.commands.commandUtils.SeenPlayer;
 import com.playtime.config.Config;
-import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class SeenCMD implements Command {
+public class SeenCMD implements SimpleCommand {
     ProxyServer proxyServer;
 
     public SeenCMD(ProxyServer proxyServer) {
@@ -23,7 +23,10 @@ public class SeenCMD implements Command {
     }
 
     @Override
-    public void execute(@NonNull CommandSource source, String @NotNull [] args) {
+    public void execute(Invocation invocation) {
+        String[] args = invocation.arguments();
+        CommandSource source = invocation.source();
+
         if (!source.hasPermission("playtime.seen")) {
             source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
             return;
@@ -46,9 +49,12 @@ public class SeenCMD implements Command {
     }
 
     @Override
-    public List<String> suggest(@NonNull CommandSource source, String @NotNull [] currentArgs) {
+    public List<String> suggest(Invocation invocation) {
+        String[] args = invocation.arguments();
+        CommandSource source = invocation.source();
+
         if (!source.hasPermission("playtime.seen")) return null;
-        switch (currentArgs.length) {
+        switch (args.length) {
             case 0:
             case 1: {
                 List<String> possibleValues = new ArrayList<>();
@@ -57,9 +63,9 @@ public class SeenCMD implements Command {
                     possibleValues.add(player.getGameProfile().getName());
                 }
 
-                if (currentArgs.length  == 0) return possibleValues;
+                if (args.length  == 0) return possibleValues;
 
-                return finalizeSuggest(possibleValues, currentArgs[0].toLowerCase());
+                return finalizeSuggest(possibleValues, args[0].toLowerCase());
             }
         }
         return null;

@@ -247,31 +247,31 @@ public class Queries {
         }
     }
 
-    public static long getExtraPlaytime(String server, UUID uuid, long min, long max) {
-        String sql = "SELECT session_start, session_end FROM sessions " +
-                "WHERE uuid = ? AND server_name = ? AND session_start > ? AND session_end < ?";
+    public static HashMap<String, Long> getExtraPlaytime(UUID uuid, long min, long max) {
+        String sql = "SELECT SUM((session_end - session_start)) AS session_length, server_name FROM sessions " +
+                "WHERE uuid = ? AND session_start > ? AND session_end < ? " +
+                "GROUP BY server_name";
 
         try {
             PreparedStatement statement = DatabaseManager.getConnection().prepareStatement(sql);
 
             statement.setString(1, uuid.toString());
-            statement.setString(2, server);
-            statement.setLong(3, min);
-            statement.setLong(4, max);
+            statement.setLong(2, min);
+            statement.setLong(3, max);
 
             return calculateSessionTime(statement.executeQuery());
 
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
-        return 0;
+        return new HashMap<>();
     }
 
-    private static long calculateSessionTime(ResultSet resultSet) throws SQLException {
-        long totalSessionTime = 0;
+    private static HashMap<String, Long> calculateSessionTime(ResultSet resultSet) throws SQLException {
+        HashMap<String, Long> sessionLength = new HashMap<>();
         while (resultSet.next()) {
-            totalSessionTime += resultSet.getLong("session_end") - resultSet.getLong("session_start");
+            sessionLength.put(resultSet.getString("server_name"), resultSet.getLong("session_length"));
         }
-        return totalSessionTime;
+        return sessionLength;
     }
 }

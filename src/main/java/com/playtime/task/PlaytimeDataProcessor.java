@@ -9,6 +9,9 @@ import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.luckperms.api.LuckPerms;
+import net.luckperms.api.context.Context;
+import net.luckperms.api.context.ContextSet;
+import net.luckperms.api.context.ImmutableContextSet;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.track.Track;
@@ -60,24 +63,33 @@ public class PlaytimeDataProcessor implements Runnable{
         player.getCurrentServer().ifPresent(serverConnection -> serverConnection.getServer()
                 .sendMessage(MiniMessage.get().parse(group.getBroadcastMessage().replaceAll("%player%", player.getUsername()))));
         //Send the message that they got ranked up
-        String[] splitMessage = group.getBroadcastMessage().replaceAll("%player%", player.getUsername()).split("\\n", 2);
+        String titleMessage = group.getPlayerTitleMessage().replaceAll("%player%", player.getUsername());
+        String[] splitMessage;
+        if (titleMessage.contains("\\\n")) {
+            splitMessage = titleMessage.split("\\n", 2);
+        } else {
+            splitMessage = new String[]{titleMessage, ""};
+        }
         player.showTitle(Title.title(MiniMessage.get().parse(splitMessage[0]), MiniMessage.get().parse(splitMessage[1])));
         //Update the group
-        setGroup(user, group);
+        rankupPlayer(user, group.getTrack());
     }
 
-    private void setGroup(User user, Groups group) {
+    private void rankupPlayer(User user, String track_name) {
         LuckPerms luckPerms = Playtime.getInstance().getLuckPerms();
         Track aDefault = luckPerms.getTrackManager().getTrack("default");
         if (aDefault == null) return;
 
-        Group group1 = luckPerms.getGroupManager().getGroup(group.getGroupName());
-        if (group1 == null) return;
+        Track track = luckPerms.getTrackManager().getTrack(track_name);
 
-        String next = aDefault.getNext(Objects.requireNonNull(group1));
-        if (next == null) return;
+        if (track == null) return;
 
-        user.setPrimaryGroup(next);
+        ImmutableContextSet contextSet = ImmutableContextSet.builder()
+                .add("world", "global")
+                .add("server", "global")
+                .build();
+
+        track.promote(user, contextSet);
     }
 
     private User getLuckPermsUser(UUID uuid) {
