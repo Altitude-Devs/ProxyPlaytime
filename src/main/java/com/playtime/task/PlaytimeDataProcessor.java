@@ -9,11 +9,10 @@ import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.luckperms.api.LuckPerms;
-import net.luckperms.api.context.Context;
-import net.luckperms.api.context.ContextSet;
 import net.luckperms.api.context.ImmutableContextSet;
-import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
+import net.luckperms.api.model.user.UserManager;
+import net.luckperms.api.track.PromotionResult;
 import net.luckperms.api.track.Track;
 
 import java.sql.SQLException;
@@ -65,20 +64,18 @@ public class PlaytimeDataProcessor implements Runnable{
         //Send the message that they got ranked up
         String titleMessage = group.getPlayerTitleMessage().replaceAll("%player%", player.getUsername());
         String[] splitMessage;
-        if (titleMessage.contains("\\\n")) {
-            splitMessage = titleMessage.split("\\n", 2);
+        if (titleMessage.contains("\n")) {
+            splitMessage = titleMessage.split("\n", 2);
         } else {
             splitMessage = new String[]{titleMessage, ""};
         }
         player.showTitle(Title.title(MiniMessage.get().parse(splitMessage[0]), MiniMessage.get().parse(splitMessage[1])));
         //Update the group
-        rankupPlayer(user, group.getTrack());
+        rankUpPlayer(user, group.getTrack());
     }
 
-    private void rankupPlayer(User user, String track_name) {
+    private void rankUpPlayer(User user, String track_name) {
         LuckPerms luckPerms = Playtime.getInstance().getLuckPerms();
-        Track aDefault = luckPerms.getTrackManager().getTrack("default");
-        if (aDefault == null) return;
 
         Track track = luckPerms.getTrackManager().getTrack(track_name);
 
@@ -90,6 +87,7 @@ public class PlaytimeDataProcessor implements Runnable{
                 .build();
 
         track.promote(user, contextSet);
+        Playtime.getInstance().getLuckPerms().getUserManager().saveUser(user);
     }
 
     private User getLuckPermsUser(UUID uuid) {

@@ -279,7 +279,7 @@ public final class Config {
     //    rank-up-command: "lp user %player% promote default"
     //    broadcast-message: "<dark_blue>* %player% has ranked up to Nomad!</dark_blue>"
     //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Nomad</white>"
-    //  nomad:
+    //  \nomad:
     //    requirement: 1440
     //    commands:
     //    rank-up-command: "lp user %player% promote default"

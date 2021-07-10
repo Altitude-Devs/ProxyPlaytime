@@ -196,7 +196,6 @@ public class Queries {
         savePlayerTime(uuidFrom);
         savePlayerTime(uuidTo);
 
-//INSERT INTO playtime (uuid, server_name, playtime, last_seen) VALUES ('14904acd-d538-426c-ac56-3863311b133c', 'valley', 500000, 0) ON DUPLICATE KEY UPDATE playtime = playtime + 50000, last_seen = 0
         String sqlSelect = "SELECT uuid, server_name, playtime, last_seen FROM playtime WHERE uuid = ?";
         String sqlInsert = "INSERT INTO playtime (uuid, server_name, playtime, last_seen) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE playtime = " + (set ? "" : "playtime + ") + "?, last_seen = ?";
 

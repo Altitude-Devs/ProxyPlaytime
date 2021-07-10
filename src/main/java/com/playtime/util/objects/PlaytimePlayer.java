@@ -1,10 +1,13 @@
 package com.playtime.util.objects;
 
+import com.playtime.Playtime;
 import com.playtime.config.Config;
 import com.playtime.maps.Maps;
+import com.velocitypowered.api.proxy.Player;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -18,10 +21,11 @@ public class PlaytimePlayer {
     private final ConcurrentLinkedQueue<ServerSession> toUpdateSessions;
     private final ConcurrentLinkedQueue<String> toUpdateServers;
 
-    private boolean online = true;
+    private boolean online;
     private boolean playtimeUpdated = false;
 
     public PlaytimePlayer(UUID uuid, HashMap<String, ServerPlaytime> playtimePerServer) {
+        this.online = playerOnline(uuid);
         this.uuid = uuid;
         this.playtimePerServer = playtimePerServer;
         this.totalPlaytime = -1;
@@ -30,6 +34,13 @@ public class PlaytimePlayer {
         this.toUpdateSessions = new ConcurrentLinkedQueue<>();
         this.toUpdateServers = new ConcurrentLinkedQueue<>();
         this.lastSavedServerTime = currentSessionStart;
+    }
+
+    private boolean playerOnline(UUID uuid) {
+        Optional<Player> player = Playtime.getInstance().getServer().getPlayer(uuid);
+        if (player.isEmpty()) return false;
+
+        return player.get().isActive();
     }
 
     public UUID getUuid() {

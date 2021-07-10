@@ -28,11 +28,7 @@ public class PlaytimeExtraForPlayer {
     }
 
     public static Component getPlaytime(UUID uuid, int days) {
-        PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(uuid);
-
-        if (playtimePlayer == null) return MiniMessage.get().parse(Config.Messages.NO_PLAYTIME_STORED.getMessage().replaceAll("%player%", Utilities.getPlayerName(uuid)));
-
-        return MiniMessage.get().parse(buildMessage(playtimePlayer, days));
+        return MiniMessage.get().parse(buildMessage(uuid, days));
     }
 
     public static Component getPlaytimeWeek(String playerName) {
@@ -59,23 +55,26 @@ public class PlaytimeExtraForPlayer {
         return MiniMessage.get().parse(buildMessageWeek(playtimePlayer, weeks));
     }
 
-    private static String buildMessage(PlaytimePlayer playtimePlayer, int days) {
+    private static String buildMessage(UUID uuid, int days) {
         String header = Config.Messages.PLAYTIME_EXTENDED_FORMAT_HEADER.getMessage().replaceAll("%time%", "in the last " + days + " day" + (days == 1 ? "" : "s"));
         String format = Config.Messages.PLAYTIME_EXTENDED_FORMAT.getMessage();
         String footer = Config.Messages.PLAYTIME_EXTENDED_FORMAT_FOOTER.getMessage();
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(playtimePlayer.getUuid()))).append("\n");
+        stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(uuid))).append("\n");
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -days);
 
-        for (Map.Entry<String, Long> entry :  Queries.getExtraPlaytime(playtimePlayer.getUuid(), calendar.getTimeInMillis(), new Date().getTime()).entrySet()) {
+        HashMap<String, Long> extraPlaytime = Queries.getExtraPlaytime(uuid, calendar.getTimeInMillis(), new Date().getTime());
+        if (extraPlaytime.isEmpty()) return Config.Messages.NO_PLAYTIME_STORED.getMessage().replaceAll("%player%", Utilities.getPlayerName(uuid));
+
+        for (Map.Entry<String, Long> entry : extraPlaytime.entrySet()) {
             if(!Config.TRACKED_SERVERS.contains(entry.getKey())) continue;
             stringBuilder.append(format.replaceAll("%server%", Utilities.capitalize(entry.getKey())).replaceAll("%time%", Utilities.convertTime(entry.getValue()))).append("\n");
         }
 
-        stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(playtimePlayer.getTotalPlaytime())));
+        stringBuilder.append(footer);
 
         return stringBuilder.toString();
     }
