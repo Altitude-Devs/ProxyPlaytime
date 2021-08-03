@@ -148,13 +148,13 @@ public class PlaytimeCMD implements SimpleCommand {
         Component playtime;
 
         if (playerOptional.isPresent()) {
-            if (args.length == 2) {
+            if (args.length == 3) {
                 playtime = PlaytimeExtraForPlayer.getPlaytimeWeek(playerOptional.get().getUniqueId());
             } else {
                 playtime = PlaytimeExtraForPlayer.getPlaytimeWeek(playerOptional.get().getUniqueId(), Integer.parseInt(args[3]));
             }
         } else {
-            if (args.length == 2) {
+            if (args.length == 3) {
                 playtime = PlaytimeExtraForPlayer.getPlaytimeWeek(playerName);
             } else {
                 playtime = PlaytimeExtraForPlayer.getPlaytimeWeek(playerName, Integer.parseInt(args[3]));
@@ -171,13 +171,13 @@ public class PlaytimeCMD implements SimpleCommand {
         Component playtime;
 
         if (playerOptional.isPresent()) {
-            if (args.length == 2) {
+            if (args.length == 3) {
                 playtime = PlaytimeExtraForPlayer.getPlaytime(playerOptional.get().getUniqueId());
             } else {
                 playtime = PlaytimeExtraForPlayer.getPlaytime(playerOptional.get().getUniqueId(), Integer.parseInt(args[3]));
             }
         } else {
-            if (args.length == 2) {
+            if (args.length == 3) {
                 playtime = PlaytimeExtraForPlayer.getPlaytime(playerName);
             } else {
                 playtime = PlaytimeExtraForPlayer.getPlaytime(playerName, Integer.parseInt(args[3]));

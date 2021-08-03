@@ -266,53 +266,11 @@ public final class Config {
         AUTO_SAVE = getLong("auto-save", 5L);
         AUTO_RANK = getLong("auto-rank", 5L);
         SERVER_DISPLAY_NAME = getString("server", "");
-        TRACKED_SERVERS.addAll(getList("tracked-servers", Arrays.asList("Server1", "Server2")));
+        TRACKED_SERVERS.clear();
+        getList("tracked-servers", Arrays.asList("Server1", "Server2")).forEach(a -> TRACKED_SERVERS.add(a.toLowerCase()));
 
         loadGroups();
         loadSeenServers();
         loadMessages();
     }
-
-    //groups:
-    //  default:
-    //    requirement: 120
-    //    rank-up-command: "lp user %player% promote default"
-    //    broadcast-message: "<dark_blue>* %player% has ranked up to Nomad!</dark_blue>"
-    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Nomad</white>"
-    //  \nomad:
-    //    requirement: 1440
-    //    commands:
-    //    rank-up-command: "lp user %player% promote default"
-    //    broadcast-message: "<dark_blue>* %player% has ranked up to Peddler!</dark_blue>"
-    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Peddler</white>"
-    //  peddler:
-    //    requirement: 4320
-    //    commands:
-    //    rank-up-command: "lp user %player% promote default"
-    //    broadcast-message: "<dark_blue>* %player% has ranked up to Settler!</dark_blue>"
-    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Settler</white>"
-    //  settler:
-    //    requirement: 10080
-    //    commands:
-    //    rank-up-command: "lp user %player% promote default"
-    //    broadcast-message: "<dark_blue>* %player% has ranked up to Resident!</dark_blue>"
-    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Resident</white>"
-    //  resident:
-    //    requirement: 20160
-    //    commands:
-    //    rank-up-command: "lp user %player% promote default"
-    //    broadcast-message: "<dark_blue>* %player% has ranked up to Esquire!</dark_blue>"
-    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Esquire</white>"
-    //  esquire:
-    //    requirement: 43200
-    //    commands:
-    //    rank-up-command: "lp user %player% promote default"
-    //    broadcast-message: "<dark_blue>* %player% has ranked up to Knight!</dark_blue>"
-    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Knight</white>"
-    //  knight:
-    //    requirement: 86400
-    //    commands:
-    //    rank-up-command: "lp user %player% promote default"
-    //    broadcast-message: "<dark_blue>* %player% has ranked up to Baron!</dark_blue>"
-    //    player-title-message: "<dark_blue>Rank Up!</dark_blue>\n<white>Baron</white>"
 }

@@ -56,9 +56,9 @@ public class PlaytimeExtraForPlayer {
     }
 
     private static String buildMessage(UUID uuid, int days) {
-        String header = Config.Messages.PLAYTIME_EXTENDED_FORMAT_HEADER.getMessage().replaceAll("%time%", "in the last " + days + " day" + (days == 1 ? "" : "s"));
-        String format = Config.Messages.PLAYTIME_EXTENDED_FORMAT.getMessage();
-        String footer = Config.Messages.PLAYTIME_EXTENDED_FORMAT_FOOTER.getMessage();
+        String header = Config.Messages.PLAYTIME_EXTENDED_FORMAT_HEADER.getMessage().replaceAll("%time%", "in the last " + days + " day" + (days == 1 ? "" : "s")).replaceAll("<nl>","\n");
+        String format = Config.Messages.PLAYTIME_EXTENDED_FORMAT.getMessage().replaceAll("<nl>","\n");
+        String footer = Config.Messages.PLAYTIME_EXTENDED_FORMAT_FOOTER.getMessage().replaceAll("<nl>","\n");
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(uuid))).append("\n");
@@ -69,12 +69,15 @@ public class PlaytimeExtraForPlayer {
         HashMap<String, Long> extraPlaytime = Queries.getExtraPlaytime(uuid, calendar.getTimeInMillis(), new Date().getTime());
         if (extraPlaytime.isEmpty()) return Config.Messages.NO_PLAYTIME_STORED.getMessage().replaceAll("%player%", Utilities.getPlayerName(uuid));
 
+        long totalTime = 0;
         for (Map.Entry<String, Long> entry : extraPlaytime.entrySet()) {
             if(!Config.TRACKED_SERVERS.contains(entry.getKey())) continue;
-            stringBuilder.append(format.replaceAll("%server%", Utilities.capitalize(entry.getKey())).replaceAll("%time%", Utilities.convertTime(entry.getValue()))).append("\n");
+            Long time = entry.getValue();
+            totalTime += time;
+            stringBuilder.append(format.replaceAll("%server%", Utilities.capitalize(entry.getKey())).replaceAll("%time%", Utilities.convertTime(time))).append("\n");
         }
 
-        stringBuilder.append(footer);
+        stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(totalTime)));
 
         return stringBuilder.toString();
     }
@@ -92,9 +95,9 @@ public class PlaytimeExtraForPlayer {
                 replacement = i + " weeks ago";
                 break;
         }
-        String header = Config.Messages.PLAYTIME_EXTENDED_FORMAT_HEADER.getMessage().replaceAll("%time%", replacement);
-        String format = Config.Messages.PLAYTIME_EXTENDED_FORMAT.getMessage();
-        String footer = Config.Messages.PLAYTIME_EXTENDED_FORMAT_FOOTER.getMessage();
+        String header = Config.Messages.PLAYTIME_EXTENDED_FORMAT_HEADER.getMessage().replaceAll("<nl>", "\n").replaceAll("%time%", replacement);
+        String format = Config.Messages.PLAYTIME_EXTENDED_FORMAT.getMessage().replaceAll("<nl>", "\n");
+        String footer = Config.Messages.PLAYTIME_EXTENDED_FORMAT_FOOTER.getMessage().replaceAll("<nl>", "\n");
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(playtimePlayer.getUuid()))).append("\n");
@@ -108,12 +111,15 @@ public class PlaytimeExtraForPlayer {
         calendar.add(Calendar.WEEK_OF_YEAR, -1);
         long firstDayOfLastWeek = calendar.getTimeInMillis();
 
+        long totalTime = 0;
         for (Map.Entry<String, Long> entry : Queries.getExtraPlaytime(playtimePlayer.getUuid(), firstDayOfLastWeek,  lastDayOfWeek).entrySet()) {
-            if(!Config.TRACKED_SERVERS.contains(entry.getKey())) continue;
-            stringBuilder.append(format.replaceAll("%server%", Utilities.capitalize(entry.getKey())).replaceAll("%time%", Utilities.convertTime(entry.getValue()))).append("\n");
+            if(!Config.TRACKED_SERVERS.contains(entry.getKey().toLowerCase())) continue;
+            Long time = entry.getValue();
+            totalTime += time;
+            stringBuilder.append(format.replaceAll("%server%", Utilities.capitalize(entry.getKey())).replaceAll("%time%", Utilities.convertTime(time))).append("\n");
         }
 
-        stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(playtimePlayer.getTotalPlaytime())));
+        stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(totalTime)));
 
         return stringBuilder.toString();
     }
