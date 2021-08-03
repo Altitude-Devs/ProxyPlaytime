@@ -55,10 +55,11 @@ public class PlaytimePlayer {
         updateServerTime(new Date());
 
         if (logout) {
-            saveSession();
-            currentServer = "";
             online = false;
             Maps.loggedOutPlayers.add(this); //Queue player for removal from cache
+            if (currentServer.equals("")) return;
+            saveSession();
+            currentServer = "";
         }
     }
 
