@@ -54,8 +54,6 @@ public class SeenPlayer {
 
         if (lastSeen == null || lastSeen.getLastSeen() == 0) return MiniMessage.get().parse(Config.Messages.SEEN_TIME_NULL.getMessage());
 
-        System.out.println(lastSeen.getLastSeen());
-
         return MiniMessage.get().parse(Config.Messages.SEEN_FORMAT.getMessage()
                 .replaceAll("%player%", Utilities.getPlayerName(uuid))
                 .replaceAll("%online/offline%", Config.Messages.SEEN_OFFLINE_FORMAT.getMessage())
