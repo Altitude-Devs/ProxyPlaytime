@@ -113,7 +113,7 @@ public class Queries {
         }
 
         try {
-            PreparedStatement statement = DatabaseManager.getConnection().prepareStatement("SELECT server_name, last_seen FROM playtime WHERE uuid = ? ORDER BY last_seen DESC LIMIT 1");
+            PreparedStatement statement = DatabaseManager.getConnection().prepareStatement("SELECT server_name, last_seen FROM playtime WHERE uuid = ? AND last_seen IS NOT NULL ORDER BY last_seen DESC LIMIT 1");
             statement.setString(1, uuid.toString());
 
             ResultSet resultSet = statement.executeQuery();
