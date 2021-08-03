@@ -45,7 +45,7 @@ public class SeenCMD implements SimpleCommand {
 
         Optional<Player> playerOptional = proxyServer.getPlayer(playerName);
 
-        source.sendMessage(SeenPlayer.getLastSeen(playerName, playerOptional.isPresent()));
+        source.sendMessage(SeenPlayer.getLastSeen(playerName, playerOptional.orElse(null)));
     }
 
     @Override
