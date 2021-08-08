@@ -29,7 +29,7 @@ public class PlaytimeDataProcessor implements Runnable{
             CopyOnWriteArrayList<PlaytimePlayer> playtimePlayers = new CopyOnWriteArrayList<>(Maps.playtimePlayers.values());
 
             for (PlaytimePlayer playtimePlayer : playtimePlayers) {
-                if (!playtimePlayer.isOnline()) continue;
+                if (playtimePlayer == null || !playtimePlayer.isOnline()) continue;
                 playtimePlayer.updateServerTime(false);
 
                 autoRank(playtimePlayer);
