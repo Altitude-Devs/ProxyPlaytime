@@ -11,12 +11,11 @@ import net.kyori.adventure.title.Title;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.context.ImmutableContextSet;
 import net.luckperms.api.model.user.User;
-import net.luckperms.api.model.user.UserManager;
-import net.luckperms.api.track.PromotionResult;
 import net.luckperms.api.track.Track;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
