@@ -64,7 +64,7 @@ public class PlaytimeExtraForPlayer {
         stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(uuid))).append("\n");
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -days);
+        calendar.add(Calendar.DATE, -days);
 
         HashMap<String, Long> extraPlaytime = Queries.getExtraPlaytime(uuid, calendar.getTimeInMillis(), new Date().getTime());
         if (extraPlaytime.isEmpty()) return Config.Messages.NO_PLAYTIME_STORED.getMessage().replaceAll("%player%", Utilities.getPlayerName(uuid));
@@ -102,17 +102,14 @@ public class PlaytimeExtraForPlayer {
 
         stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(playtimePlayer.getUuid()))).append("\n");
 
-        Calendar calendar = getCalendarAtEndOfCurrentWeek();
-
-        if (i > 0) calendar.add(Calendar.WEEK_OF_YEAR, -i);
+        Calendar calendar = getCalendarAtStartOfCurrentWeek();
+        if (i > 0) calendar.add(Calendar.DATE, -(i * 7));
+        long firstDayOfWeek = calendar.getTimeInMillis();
+        calendar.add(Calendar.DATE, 7);
         long lastDayOfWeek = calendar.getTimeInMillis();
 
-        calendar.add(Calendar.MILLISECOND, 1); //Go to Sunday next week
-        calendar.add(Calendar.WEEK_OF_YEAR, -1);
-        long firstDayOfLastWeek = calendar.getTimeInMillis();
-
         long totalTime = 0;
-        for (Map.Entry<String, Long> entry : Queries.getExtraPlaytime(playtimePlayer.getUuid(), firstDayOfLastWeek,  lastDayOfWeek).entrySet()) {
+        for (Map.Entry<String, Long> entry : Queries.getExtraPlaytime(playtimePlayer.getUuid(), firstDayOfWeek,  lastDayOfWeek).entrySet()) {
             if(!Config.TRACKED_SERVERS.contains(entry.getKey().toLowerCase())) continue;
             Long time = entry.getValue();
             totalTime += time;
@@ -124,7 +121,7 @@ public class PlaytimeExtraForPlayer {
         return stringBuilder.toString();
     }
 
-    private static Calendar getCalendarAtEndOfCurrentWeek() {
+    private static Calendar getCalendarAtStartOfCurrentWeek() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -132,8 +129,7 @@ public class PlaytimeExtraForPlayer {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        calendar.add(Calendar.MILLISECOND, -1); //end of Saturday this week
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 
         return calendar;
     }
