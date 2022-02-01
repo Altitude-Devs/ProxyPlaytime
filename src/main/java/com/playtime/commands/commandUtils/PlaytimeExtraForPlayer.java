@@ -63,6 +63,7 @@ public class PlaytimeExtraForPlayer {
 
         stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(uuid))).append("\n");
 
+        days+=1;
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -days);
 
