@@ -115,12 +115,26 @@ public class PlaytimeCMD implements SimpleCommand {
                     break;
                 }
 
+                int days = 0;
+                if (args.length > 3) {
+                    try {
+                        days = Integer.parseInt(args[3]);
+                    } catch (NumberFormatException e) {
+                        source.sendMessage(MiniMessage.get().parse("<red>Invalid number.</red>"));
+                        return;
+                    }
+                    if (days < 0) {
+                        source.sendMessage(MiniMessage.get().parse("<red>Invalid number.</red>"));
+                        return;
+                    }
+                }
+
                 switch (args[2].toLowerCase()) {
                     case "day":
-                        playtimeExtraDay(args, source);
+                        playtimeExtraDay(args, source, days);
                         break;
                     case "week":
-                        playtimeExtraWeek(args, source);
+                        playtimeExtraWeek(args, source, days);
                         break;
                     default:
                         source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
@@ -141,30 +155,28 @@ public class PlaytimeCMD implements SimpleCommand {
         }
     }
 
-    private void playtimeExtraWeek(String[] args, CommandSource source) {
+    private void playtimeExtraWeek(String[] args, CommandSource source, int days) {
         String playerName = args[1];
 
         Optional<Player> playerOptional = proxyServer.getPlayer(playerName);
         Component playtime;
 
         if (playerOptional.isPresent()) {
-            if (args.length == 3) {
+            if (args.length == 3)
                 playtime = PlaytimeExtraForPlayer.getPlaytimeWeek(playerOptional.get().getUniqueId());
-            } else {
-                playtime = PlaytimeExtraForPlayer.getPlaytimeWeek(playerOptional.get().getUniqueId(), Integer.parseInt(args[3]));
-            }
+            else
+                playtime = PlaytimeExtraForPlayer.getPlaytimeWeek(playerOptional.get().getUniqueId(), days);
         } else {
-            if (args.length == 3) {
+            if (args.length == 3)
                 playtime = PlaytimeExtraForPlayer.getPlaytimeWeek(playerName);
-            } else {
-                playtime = PlaytimeExtraForPlayer.getPlaytimeWeek(playerName, Integer.parseInt(args[3]));
-            }
+            else
+                playtime = PlaytimeExtraForPlayer.getPlaytimeWeek(playerName, days);
         }
 
         source.sendMessage(playtime);
     }
 
-    private void playtimeExtraDay(String[] args, CommandSource source) {
+    private void playtimeExtraDay(String[] args, CommandSource source, int days) {
         String playerName = args[1];
 
         Optional<Player> playerOptional = proxyServer.getPlayer(playerName);
