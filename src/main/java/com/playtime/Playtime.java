@@ -7,6 +7,7 @@ import com.playtime.config.Config;
 import com.playtime.database.DatabaseManager;
 import com.playtime.events.LoginEvent;
 import com.playtime.events.LogoutEvent;
+import com.playtime.events.PluginMessage;
 import com.playtime.handlers.ServerHandler;
 import com.playtime.task.PlaytimeDataProcessor;
 import com.playtime.task.LogoutTracker;
@@ -16,6 +17,8 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -37,6 +40,7 @@ public class Playtime { //TODO only track playtime on servers in config
     ScheduledTask logoutTracker;
 
     private ServerHandler serverHandler;
+    private final ChannelIdentifier channelIdentifier = MinecraftChannelIdentifier.from("playtime:playtime");
 
     @Inject
     public Playtime(ProxyServer server, Logger logger, @DataDirectory Path proxydataDirectory) {
@@ -71,6 +75,7 @@ public class Playtime { //TODO only track playtime on servers in config
 
         server.getEventManager().register(instance, new LoginEvent());
         server.getEventManager().register(instance, new LogoutEvent());
+        server.getEventManager().register(instance, new PluginMessage(channelIdentifier));
 
         server.getCommandManager().register("playtime", new PlaytimeCMD(server), "pt");
         server.getCommandManager().register("seen", new SeenCMD(server));

@@ -22,16 +22,34 @@ public class SeenPlayer {
         return player != null ? getOnlineSeen(playerName, player) : getOfflineSeen(playerName);
     }
 
+    public static Component getLastSeen(UUID uuid, Player player) {
+        return player != null ? getOnlineSeen(uuid, player) : getOfflineSeen(uuid);
+    }
+
     private static Component getOnlineSeen(String playerName, Player player) {
-        PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(player.getUniqueId());
+        UUID uuid = player.getUniqueId();
+        PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(uuid);
 
         if (playtimePlayer == null) return MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
+
+        return getOnlineSeen(playtimePlayer, player);
+    }
+
+    private static Component getOnlineSeen(UUID uuid, Player player) {
+        PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(uuid);
+
+        if (playtimePlayer == null) return Component.empty();
+
+        return getOnlineSeen(playtimePlayer, player);
+    }
+
+    private static Component getOnlineSeen(PlaytimePlayer playtimePlayer, Player player) {
 
         Date currentSessionStart = playtimePlayer.getCurrentSessionStart();
         String passedTime;
 
         if (currentSessionStart == null) {
-            PlaytimeSeen lastSeen = Queries.getLastSeen(player.getUniqueId());
+            PlaytimeSeen lastSeen = Queries.getLastSeen(playtimePlayer.getUuid());
             if (lastSeen == null || lastSeen.getLastSeen() == 0) return MiniMessage.get().parse(Config.Messages.SEEN_TIME_NULL.getMessage());
             passedTime = getPassedTime(lastSeen.getLastSeen());
         } else {
@@ -49,6 +67,12 @@ public class SeenPlayer {
         UUID uuid = Utilities.getPlayerUUID(playerName);
 
         if (uuid == null) return MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
+
+        return getOfflineSeen(uuid);
+    }
+
+    private static Component getOfflineSeen(UUID uuid) {
+        if (uuid == null) return Component.empty();
 
         PlaytimeSeen lastSeen = Queries.getLastSeen(uuid);
 
