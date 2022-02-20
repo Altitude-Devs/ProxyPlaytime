@@ -50,6 +50,7 @@ public class PluginMessage {
 
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("playtimeresponse");
+                out.writeUTF(uuid.toString());
                 out.writeLong(playtimeSeen.getLastSeen());
                 out.writeUTF(GsonComponentSerializer.gson().serialize(component));
                 serverConnection.sendPluginMessage(identifier, out.toByteArray());
