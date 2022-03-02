@@ -233,6 +233,22 @@ public class Queries {
         return false;
     }
 
+    public static boolean resetPlaytime(UUID uuid) {
+        String sql = "DELETE FROM playtime WHERE uuid = ?";
+        String sql2 = "DELETE FROM sessions WHERE uuid = ?";
+        try {
+            PreparedStatement statement = DatabaseManager.getConnection().prepareStatement(sql);
+            statement.setString(1, uuid.toString());
+            PreparedStatement statement2 = DatabaseManager.getConnection().prepareStatement(sql2);
+            statement2.setString(1, uuid.toString());
+
+            return statement.executeUpdate() > 0 && statement2.executeUpdate() > 0;
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return false;
+    }
+
     private static void savePlayerTime(UUID uuid) {
         if (Maps.playtimePlayers.containsKey(uuid)) {
             updatePlaytime(Maps.playtimePlayers.get(uuid));

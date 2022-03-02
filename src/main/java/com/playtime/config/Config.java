@@ -185,7 +185,10 @@ public final class Config {
         SEEN_FORMAT("messages.seen-format", "<white>Player <gold>%player%</gold> has been %online/offline% for %time% on %server%.</white>"),
         SEEN_ONLINE_FORMAT("messages.seen-online-format", "<green>online</green>"),
         SEEN_OFFLINE_FORMAT("messages.seen-offline-format", "<red>offline</red>"),
-        SEEN_TIME_NULL("messages.seen-time-null", "<red>No recorded time.</red>");
+        SEEN_TIME_NULL("messages.seen-time-null", "<red>No recorded time.</red>"),
+        INVALID_PLAYTIME_RESET_COMMAND("messages.invalid-playtime-reset-command", "<red>Invalid Usage. <gold>/playtime reset <player></gold>.</red>"),
+        PLAYTIME_RESET_SUCCESS("messages.playtime-reset-success", "<green>Reset %player% playtime.</green>"),
+        PLAYTIME_RESET_FAILURE("messages.playtime-reset-failure", "<red>Failed to reset %player% playtime.</red>");
 
         private final String key;
         private String message;

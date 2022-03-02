@@ -1,24 +1,22 @@
 package com.playtime.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.playtime.commands.commandUtils.PlaytimeExtraForPlayer;
 import com.playtime.commands.commandUtils.PlaytimeForPlayer;
 import com.playtime.config.Config;
 import com.playtime.database.Queries;
 import com.playtime.util.Utilities;
-import com.velocitypowered.api.command.*;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class PlaytimeCMD implements SimpleCommand {
     ProxyServer proxyServer;
@@ -44,7 +42,7 @@ public class PlaytimeCMD implements SimpleCommand {
         }
 
         switch (args[0].toLowerCase()) {
-            case "reload":
+            case "reload" -> {
                 if (!source.hasPermission("playtime.use.other")) {
                     source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
                     break;
@@ -53,13 +51,31 @@ public class PlaytimeCMD implements SimpleCommand {
                 source.sendMessage(miniMessage.parse("<red>Reloading config...</red>"));
                 Config.reload();
                 source.sendMessage(miniMessage.parse("<green>Config reloaded!</green>"));
-                break;
-            case "move":
+            }
+            case "reset" -> {
+                if (!source.hasPermission("playtime.reset")) {
+                    source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
+                    break;
+                }
+                if (args.length != 2) {
+                    source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_PLAYTIME_RESET_COMMAND.getMessage()));
+                    break;
+                }
+                UUID uuid = Utilities.getPlayerUUID(args[1]);
+                if (uuid == null) {
+                    source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[1])));
+                    break;
+                }
+                if (Queries.resetPlaytime(uuid))
+                    source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYTIME_RESET_SUCCESS.getMessage().replaceAll("%player%", args[1])));
+                else
+                    source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYTIME_RESET_FAILURE.getMessage().replaceAll("%player%", args[1])));
+            }
+            case "move" -> {
                 if (!source.hasPermission("playtime.move")) {
                     source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
                     break;
                 }
-
                 if (args.length != 4 || !args[1].matches("[a-zA-Z0-9_]{3,16}") || !args[2].matches("[a-zA-Z0-9_]{3,16}") || args[1].equalsIgnoreCase(args[2])) {
                     source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_PLAYTIME_MOVE_COMMAND.getMessage()));
                     break;
@@ -73,10 +89,8 @@ public class PlaytimeCMD implements SimpleCommand {
                     source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_PLAYTIME_MOVE_COMMAND.getMessage()));
                     break;
                 }
-
                 UUID playerFrom = Utilities.getPlayerUUID(args[1]);
                 UUID playerTo = Utilities.getPlayerUUID(args[2]);
-
                 if (playerFrom == null) {
                     source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[1])));
                     return;
@@ -85,15 +99,13 @@ public class PlaytimeCMD implements SimpleCommand {
                     source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[2])));
                     return;
                 }
-
                 boolean success = Queries.movePlaytime(playerFrom, playerTo, set);
-
                 source.sendMessage(MiniMessage.get().parse(
                         (success ? Config.Messages.MOVED_PLAYTIME.getMessage() : Config.Messages.FAILED_MOVED_PLAYTIME.getMessage())
                                 .replaceAll("%playerFrom%", Utilities.getPlayerName(playerFrom))
                                 .replaceAll("%playerTo%", Utilities.getPlayerName(playerTo))));
-                break;
-            case "extra":
+            }
+            case "extra" -> {
                 if (!source.hasPermission("playtime.extra")) {
                     source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
                     break;
@@ -114,7 +126,6 @@ public class PlaytimeCMD implements SimpleCommand {
                     source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
                     break;
                 }
-
                 int days = 0;
                 if (args.length > 3) {
                     try {
@@ -128,21 +139,13 @@ public class PlaytimeCMD implements SimpleCommand {
                         return;
                     }
                 }
-
                 switch (args[2].toLowerCase()) {
-                    case "day":
-                        playtimeExtraDay(args, source, days);
-                        break;
-                    case "week":
-                        playtimeExtraWeek(args, source, days);
-                        break;
-                    default:
-                        source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
-                        break;
+                    case "day" -> playtimeExtraDay(args, source, days);
+                    case "week" -> playtimeExtraWeek(args, source, days);
+                    default -> source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
                 }
-
-                break;
-            default:
+            }
+            default -> {
                 if (!source.hasPermission("playtime.use.other")) {
                     source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
                     return;
@@ -152,6 +155,7 @@ public class PlaytimeCMD implements SimpleCommand {
                     return;
                 }
                 playtimeGet(proxyServer, source, args[0]);
+            }
         }
     }
 
@@ -216,6 +220,7 @@ public class PlaytimeCMD implements SimpleCommand {
                 if (source.hasPermission("playtime.move")) possibleValues.add("move");
                 if (source.hasPermission("playtime.reload")) possibleValues.add("reload");
                 if (source.hasPermission("playtime.extra")) possibleValues.add("extra");
+                if (source.hasPermission("playtime.reset")) possibleValues.add("reset");
 
                 if (!source.hasPermission("playtime.use.other")) return possibleValues;
 
@@ -236,6 +241,14 @@ public class PlaytimeCMD implements SimpleCommand {
                         for (Player player : proxyServer.getAllPlayers()) {
                             possibleValues.add(player.getGameProfile().getName());
                         }
+                        break;
+                    case "reset":
+                        if (!source.hasPermission("playtime.reset")) break;
+
+                        for (Player player : proxyServer.getAllPlayers()) {
+                            possibleValues.add(player.getGameProfile().getName());
+                        }
+                        break;
                 }
                 break;
             }
