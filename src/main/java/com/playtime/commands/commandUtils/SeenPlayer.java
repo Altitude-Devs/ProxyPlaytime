@@ -30,7 +30,7 @@ public class SeenPlayer {
         UUID uuid = player.getUniqueId();
         PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(uuid);
 
-        if (playtimePlayer == null) return MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
+        if (playtimePlayer == null) return MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
 
         return getOnlineSeen(playtimePlayer, player);
     }
@@ -50,13 +50,13 @@ public class SeenPlayer {
 
         if (currentSessionStart == null) {
             PlaytimeSeen lastSeen = Queries.getLastSeen(playtimePlayer.getUuid());
-            if (lastSeen == null || lastSeen.getLastSeen() == 0) return MiniMessage.get().parse(Config.Messages.SEEN_TIME_NULL.getMessage());
+            if (lastSeen == null || lastSeen.getLastSeen() == 0) return MiniMessage.miniMessage().deserialize(Config.Messages.SEEN_TIME_NULL.getMessage());
             passedTime = getPassedTime(lastSeen.getLastSeen());
         } else {
             passedTime = getPassedTime(currentSessionStart.getTime());
         }
 
-        return MiniMessage.get().parse(Config.Messages.SEEN_FORMAT.getMessage()
+        return MiniMessage.miniMessage().deserialize(Config.Messages.SEEN_FORMAT.getMessage()
                 .replaceAll("%player%", player.getUsername())
                 .replaceAll("%online/offline%", Config.Messages.SEEN_ONLINE_FORMAT.getMessage())
                 .replaceAll("%time%", passedTime)
@@ -66,7 +66,7 @@ public class SeenPlayer {
     private static Component getOfflineSeen(String playerName) {
         UUID uuid = Utilities.getPlayerUUID(playerName);
 
-        if (uuid == null) return MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
+        if (uuid == null) return MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
 
         return getOfflineSeen(uuid);
     }
@@ -76,9 +76,9 @@ public class SeenPlayer {
 
         PlaytimeSeen lastSeen = Queries.getLastSeen(uuid);
 
-        if (lastSeen == null || lastSeen.getLastSeen() == 0) return MiniMessage.get().parse(Config.Messages.SEEN_TIME_NULL.getMessage());
+        if (lastSeen == null || lastSeen.getLastSeen() == 0) return MiniMessage.miniMessage().deserialize(Config.Messages.SEEN_TIME_NULL.getMessage());
 
-        return MiniMessage.get().parse(Config.Messages.SEEN_FORMAT.getMessage()
+        return MiniMessage.miniMessage().deserialize(Config.Messages.SEEN_FORMAT.getMessage()
                 .replaceAll("%player%", Utilities.getPlayerName(uuid))
                 .replaceAll("%online/offline%", Config.Messages.SEEN_OFFLINE_FORMAT.getMessage())
                 .replaceAll("%time%", getPassedTime(lastSeen.getLastSeen()))

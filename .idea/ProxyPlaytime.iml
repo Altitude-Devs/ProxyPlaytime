@@ -47,7 +47,7 @@
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.26" level="project" />
     <orderEntry type="library" name="Maven: org.spongepowered:configurate-gson:3.7.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.luckperms:api:5.3" level="project" />
-    <orderEntry type="library" name="Maven: net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: net.kyori:adventure-text-minimessage:4.10.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: mysql:mysql-connector-java:5.1.49" level="project" />
   </component>
 </module>

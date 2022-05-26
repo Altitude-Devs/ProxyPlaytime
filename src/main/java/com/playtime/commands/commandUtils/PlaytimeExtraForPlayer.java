@@ -20,7 +20,7 @@ public class PlaytimeExtraForPlayer {
 
         if (uuid != null) return getPlaytime(uuid, days);
 
-        return MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
+        return MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
     }
 
     public static Component getPlaytime(UUID uuid) {
@@ -28,7 +28,7 @@ public class PlaytimeExtraForPlayer {
     }
 
     public static Component getPlaytime(UUID uuid, int days) {
-        return MiniMessage.get().parse(buildMessage(uuid, days));
+        return MiniMessage.miniMessage().deserialize(buildMessage(uuid, days));
     }
 
     public static Component getPlaytimeWeek(String playerName) {
@@ -40,7 +40,7 @@ public class PlaytimeExtraForPlayer {
 
         if (uuid != null) return getPlaytimeWeek(uuid, weeks);
 
-        return MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
+        return MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
     }
 
     public static Component getPlaytimeWeek(UUID uuid) {
@@ -50,9 +50,9 @@ public class PlaytimeExtraForPlayer {
     public static Component getPlaytimeWeek(UUID uuid, int weeks) {
         PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(uuid);
 
-        if (playtimePlayer == null) return MiniMessage.get().parse(Config.Messages.NO_PLAYTIME_STORED.getMessage().replaceAll("%player%", Utilities.getPlayerName(uuid)));
+        if (playtimePlayer == null) return MiniMessage.miniMessage().deserialize(Config.Messages.NO_PLAYTIME_STORED.getMessage().replaceAll("%player%", Utilities.getPlayerName(uuid)));
 
-        return MiniMessage.get().parse(buildMessageWeek(playtimePlayer, weeks));
+        return MiniMessage.miniMessage().deserialize(buildMessageWeek(playtimePlayer, weeks));
     }
 
     private static String buildMessage(UUID uuid, int days) {

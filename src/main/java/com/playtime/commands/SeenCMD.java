@@ -28,17 +28,17 @@ public class SeenCMD implements SimpleCommand {
         CommandSource source = invocation.source();
 
         if (!source.hasPermission("playtime.seen")) {
-            source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
+            source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.NO_PERMISSION.getMessage()));
             return;
         }
 
         if (args.length == 0) {
-            source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_SEEN_COMMAND.getMessage()));
+            source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.INVALID_SEEN_COMMAND.getMessage()));
             return;
         }
 
         if (!args[0].matches("[a-zA-Z0-9_]{3,16}")) {
-            source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[0])));
+            source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[0])));
         }
 
         String playerName = args[0];

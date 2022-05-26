@@ -17,17 +17,17 @@ public class PlaytimeForPlayer {
 
         if (uuid != null) return getPlaytime(uuid);
 
-        return MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
+        return MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
     }
 
     public static Component getPlaytime(UUID uuid) {
         PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(uuid);
 
         if (playtimePlayer == null) {
-            return MiniMessage.get().parse(Config.Messages.NO_PLAYTIME_STORED.getMessage());
+            return MiniMessage.miniMessage().deserialize(Config.Messages.NO_PLAYTIME_STORED.getMessage());
         }
 
-        return MiniMessage.get().parse(buildMessage(playtimePlayer));
+        return MiniMessage.miniMessage().deserialize(buildMessage(playtimePlayer));
     }
 
     private static String buildMessage(PlaytimePlayer playtimePlayer) {

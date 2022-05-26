@@ -31,7 +31,7 @@ public class PlaytimeCMD implements SimpleCommand {
         CommandSource source = invocation.source();
 
         if (!source.hasPermission("playtime.use")) {
-            source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
+            source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.NO_PERMISSION.getMessage()));
             return;
         }
 
@@ -44,40 +44,40 @@ public class PlaytimeCMD implements SimpleCommand {
         switch (args[0].toLowerCase()) {
             case "reload" -> {
                 if (!source.hasPermission("playtime.use.other")) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.NO_PERMISSION.getMessage()));
                     break;
                 }
-                MiniMessage miniMessage = MiniMessage.get();
-                source.sendMessage(miniMessage.parse("<red>Reloading config...</red>"));
+                MiniMessage miniMessage = MiniMessage.miniMessage();
+                source.sendMessage(miniMessage.deserialize("<red>Reloading config...</red>"));
                 Config.reload();
-                source.sendMessage(miniMessage.parse("<green>Config reloaded!</green>"));
+                source.sendMessage(miniMessage.deserialize("<green>Config reloaded!</green>"));
             }
             case "reset" -> {
                 if (!source.hasPermission("playtime.reset")) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.NO_PERMISSION.getMessage()));
                     break;
                 }
                 if (args.length != 2) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_PLAYTIME_RESET_COMMAND.getMessage()));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.INVALID_PLAYTIME_RESET_COMMAND.getMessage()));
                     break;
                 }
                 UUID uuid = Utilities.getPlayerUUID(args[1]);
                 if (uuid == null) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[1])));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[1])));
                     break;
                 }
                 if (Queries.resetPlaytime(uuid))
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYTIME_RESET_SUCCESS.getMessage().replaceAll("%player%", args[1])));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.PLAYTIME_RESET_SUCCESS.getMessage().replaceAll("%player%", args[1])));
                 else
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYTIME_RESET_FAILURE.getMessage().replaceAll("%player%", args[1])));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.PLAYTIME_RESET_FAILURE.getMessage().replaceAll("%player%", args[1])));
             }
             case "move" -> {
                 if (!source.hasPermission("playtime.move")) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.NO_PERMISSION.getMessage()));
                     break;
                 }
                 if (args.length != 4 || !args[1].matches("[a-zA-Z0-9_]{3,16}") || !args[2].matches("[a-zA-Z0-9_]{3,16}") || args[1].equalsIgnoreCase(args[2])) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_PLAYTIME_MOVE_COMMAND.getMessage()));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.INVALID_PLAYTIME_MOVE_COMMAND.getMessage()));
                     break;
                 }
                 boolean set;
@@ -86,28 +86,28 @@ public class PlaytimeCMD implements SimpleCommand {
                 } else if (args[3].equalsIgnoreCase("set")) {
                     set = true;
                 } else {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_PLAYTIME_MOVE_COMMAND.getMessage()));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.INVALID_PLAYTIME_MOVE_COMMAND.getMessage()));
                     break;
                 }
                 UUID playerFrom = Utilities.getPlayerUUID(args[1]);
                 UUID playerTo = Utilities.getPlayerUUID(args[2]);
                 if (playerFrom == null) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[1])));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[1])));
                     return;
                 }
                 if (playerTo == null) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[2])));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[2])));
                     return;
                 }
                 boolean success = Queries.movePlaytime(playerFrom, playerTo, set);
-                source.sendMessage(MiniMessage.get().parse(
+                source.sendMessage(MiniMessage.miniMessage().deserialize(
                         (success ? Config.Messages.MOVED_PLAYTIME.getMessage() : Config.Messages.FAILED_MOVED_PLAYTIME.getMessage())
                                 .replaceAll("%playerFrom%", Utilities.getPlayerName(playerFrom))
                                 .replaceAll("%playerTo%", Utilities.getPlayerName(playerTo))));
             }
             case "extra" -> {
                 if (!source.hasPermission("playtime.extra")) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.NO_PERMISSION.getMessage()));
                     break;
                 }
                 if (args.length == 1 && source instanceof Player) {
@@ -115,15 +115,15 @@ public class PlaytimeCMD implements SimpleCommand {
                     return;
                 }
                 if (args.length < 3) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
                     break;
                 }
                 if (!args[1].matches("[a-zA-Z0-9_]{3,16}")) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
                     break;
                 }
                 if (args.length == 4 && !args[3].matches("[0-9]{1,3}")) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
                     break;
                 }
                 int days = 0;
@@ -131,27 +131,27 @@ public class PlaytimeCMD implements SimpleCommand {
                     try {
                         days = Integer.parseInt(args[3]);
                     } catch (NumberFormatException e) {
-                        source.sendMessage(MiniMessage.get().parse("<red>Invalid number.</red>"));
+                        source.sendMessage(MiniMessage.miniMessage().deserialize("<red>Invalid number.</red>"));
                         return;
                     }
                     if (days < 0) {
-                        source.sendMessage(MiniMessage.get().parse("<red>Invalid number.</red>"));
+                        source.sendMessage(MiniMessage.miniMessage().deserialize("<red>Invalid number.</red>"));
                         return;
                     }
                 }
                 switch (args[2].toLowerCase()) {
                     case "day" -> playtimeExtraDay(args, source, days);
                     case "week" -> playtimeExtraWeek(args, source, days);
-                    default -> source.sendMessage(MiniMessage.get().parse(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
+                    default -> source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.INVALID_EXTENDED_PLAYTIME_COMMAND.getMessage()));
                 }
             }
             default -> {
                 if (!source.hasPermission("playtime.use.other")) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.NO_PERMISSION.getMessage()));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.NO_PERMISSION.getMessage()));
                     return;
                 }
                 if (!args[0].matches("[a-zA-Z0-9_]{3,16}")) {
-                    source.sendMessage(MiniMessage.get().parse(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[0])));
+                    source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[0])));
                     return;
                 }
                 playtimeGet(proxyServer, source, args[0]);
