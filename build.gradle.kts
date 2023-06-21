@@ -45,8 +45,8 @@ tasks {
 
 dependencies {
     // Velocity
-    compileOnly("com.velocitypowered:velocity-api:3.1.2-SNAPSHOT") // Velocity
-    annotationProcessor("com.velocitypowered:velocity-api:3.1.2-SNAPSHOT")
+    compileOnly("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT") // Velocity
+    annotationProcessor("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
     implementation("mysql:mysql-connector-java:8.0.27") // mysql
     compileOnly("net.luckperms:api:5.4") // luckperms
 }

@@ -17,7 +17,7 @@ public class PlaytimeForPlayer {
 
         if (uuid != null) return getPlaytime(uuid);
 
-        return MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
+        return MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("<player>", playerName));
     }
 
     public static Component getPlaytime(UUID uuid) {
@@ -36,7 +36,7 @@ public class PlaytimeForPlayer {
         String footer = Config.Messages.PLAYTIME_FORMAT_FOOTER.getMessage().replaceAll("<nl>","\n");
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(playtimePlayer.getUuid()))).append("\n");
+        stringBuilder.append(header.replaceAll("<player>", Utilities.getPlayerName(playtimePlayer.getUuid()))).append("\n");
 
         for (String server: Config.TRACKED_SERVERS) {
             ServerPlaytime serverPlaytime = playtimePlayer.getPlaytimeOnServer(server);

@@ -38,7 +38,7 @@ public class SeenCMD implements SimpleCommand {
         }
 
         if (!args[0].matches("[a-zA-Z0-9_]{3,16}")) {
-            source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", args[0])));
+            source.sendMessage(MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("<player>", args[0])));
         }
 
         String playerName = args[0];
@@ -60,7 +60,7 @@ public class SeenCMD implements SimpleCommand {
                 List<String> possibleValues = new ArrayList<>();
 
                 for (Player player : proxyServer.getAllPlayers()) {
-                    possibleValues.add(player.getGameProfile().getName());
+                    possibleValues.add(player.getUsername());
                 }
 
                 if (args.length  == 0) return possibleValues;

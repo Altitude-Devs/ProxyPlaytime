@@ -20,7 +20,7 @@ public class PlaytimeExtraForPlayer {
 
         if (uuid != null) return getPlaytime(uuid, days);
 
-        return MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
+        return MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("<player>", playerName));
     }
 
     public static Component getPlaytime(UUID uuid) {
@@ -40,7 +40,7 @@ public class PlaytimeExtraForPlayer {
 
         if (uuid != null) return getPlaytimeWeek(uuid, weeks);
 
-        return MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("%player%", playerName));
+        return MiniMessage.miniMessage().deserialize(Config.Messages.PLAYER_NOT_FOUND.getMessage().replaceAll("<player>", playerName));
     }
 
     public static Component getPlaytimeWeek(UUID uuid) {
@@ -50,7 +50,7 @@ public class PlaytimeExtraForPlayer {
     public static Component getPlaytimeWeek(UUID uuid, int weeks) {
         PlaytimePlayer playtimePlayer = Queries.getPlaytimePlayer(uuid);
 
-        if (playtimePlayer == null) return MiniMessage.miniMessage().deserialize(Config.Messages.NO_PLAYTIME_STORED.getMessage().replaceAll("%player%", Utilities.getPlayerName(uuid)));
+        if (playtimePlayer == null) return MiniMessage.miniMessage().deserialize(Config.Messages.NO_PLAYTIME_STORED.getMessage().replaceAll("<player>", Utilities.getPlayerName(uuid)));
 
         return MiniMessage.miniMessage().deserialize(buildMessageWeek(playtimePlayer, weeks));
     }
@@ -61,14 +61,14 @@ public class PlaytimeExtraForPlayer {
         String footer = Config.Messages.PLAYTIME_EXTENDED_FORMAT_FOOTER.getMessage().replaceAll("<nl>","\n");
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(uuid))).append("\n");
+        stringBuilder.append(header.replaceAll("<player>", Utilities.getPlayerName(uuid))).append("\n");
 
         days+=1;
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -days);
 
         HashMap<String, Long> extraPlaytime = Queries.getExtraPlaytime(uuid, calendar.getTimeInMillis(), new Date().getTime());
-        if (extraPlaytime.isEmpty()) return Config.Messages.NO_PLAYTIME_STORED.getMessage().replaceAll("%player%", Utilities.getPlayerName(uuid));
+        if (extraPlaytime.isEmpty()) return Config.Messages.NO_PLAYTIME_STORED.getMessage().replaceAll("<player>", Utilities.getPlayerName(uuid));
 
         long totalTime = 0;
         for (Map.Entry<String, Long> entry : extraPlaytime.entrySet()) {
@@ -101,7 +101,7 @@ public class PlaytimeExtraForPlayer {
         String footer = Config.Messages.PLAYTIME_EXTENDED_FORMAT_FOOTER.getMessage().replaceAll("<nl>", "\n");
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(header.replaceAll("%player%", Utilities.getPlayerName(playtimePlayer.getUuid()))).append("\n");
+        stringBuilder.append(header.replaceAll("<player>", Utilities.getPlayerName(playtimePlayer.getUuid()))).append("\n");
 
         Calendar calendar = getCalendarAtStartOfCurrentWeek();
         if (i > 0) calendar.add(Calendar.DATE, -(i * 7));

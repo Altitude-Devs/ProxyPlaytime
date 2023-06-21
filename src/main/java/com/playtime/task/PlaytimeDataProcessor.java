@@ -67,9 +67,9 @@ public class PlaytimeDataProcessor implements Runnable{
 
         //Let everyone know the user got ranked up
         player.getCurrentServer().ifPresent(serverConnection -> serverConnection.getServer()
-                .sendMessage(MiniMessage.miniMessage().deserialize(group.getBroadcastMessage().replaceAll("%player%", player.getUsername()))));
+                .sendMessage(MiniMessage.miniMessage().deserialize(group.getBroadcastMessage().replaceAll("<player>", player.getUsername()))));
         //Send the message that they got ranked up
-        String titleMessage = group.getPlayerTitleMessage().replaceAll("%player%", player.getUsername());
+        String titleMessage = group.getPlayerTitleMessage().replaceAll("<player>", player.getUsername());
         String[] splitMessage;
         if (titleMessage.contains("\n")) {
             splitMessage = titleMessage.split("\n", 2);
@@ -112,8 +112,7 @@ public class PlaytimeDataProcessor implements Runnable{
 
     private Player getPlayer(UUID uuid) {
         Optional<Player> player = Playtime.getInstance().getServer().getPlayer(uuid);
-        if (player.isEmpty()) return null;
+        return player.orElse(null);
 
-        return player.get();
     }
 }
