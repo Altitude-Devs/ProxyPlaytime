@@ -2,11 +2,9 @@ package com.playtime.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.playtime.commands.commandUtils.PlaytimeForPlayer;
-import com.playtime.commands.playtimeSubcommands.Extra;
-import com.playtime.commands.playtimeSubcommands.Move;
-import com.playtime.commands.playtimeSubcommands.Reload;
-import com.playtime.commands.playtimeSubcommands.Reset;
+import com.playtime.commands.playtimeSubcommands.*;
 import com.playtime.config.Config;
+import com.playtime.util.objects.PlaytimeTop;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
@@ -23,13 +21,14 @@ public class PlaytimeCommand extends Command implements SimpleCommand {
     private final List<SubCommand> subCommands;
     private final ProxyServer proxyServer;
 
-    public PlaytimeCommand(ProxyServer proxyServer) {
+    public PlaytimeCommand(ProxyServer proxyServer, PlaytimeTop playtimeTop) {
         this.proxyServer = proxyServer;
         subCommands = Arrays.asList(
                 new Reload(),
                 new Reset(proxyServer),
                 new Move(proxyServer),
-                new Extra(proxyServer));
+                new Extra(proxyServer),
+                new Top(proxyServer, playtimeTop));
     }
 
     @Override

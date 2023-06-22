@@ -11,6 +11,8 @@ import com.playtime.events.PluginMessage;
 import com.playtime.handlers.ServerHandler;
 import com.playtime.task.PlaytimeDataProcessor;
 import com.playtime.task.LogoutTracker;
+import com.playtime.task.UpdatePlaytimeTop;
+import com.playtime.util.objects.PlaytimeTop;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -26,6 +28,8 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "proxyplaytime", name = "Proxy Playtime", version = "0.1.0-SNAPSHOT",
@@ -77,7 +81,11 @@ public class Playtime { //TODO only track playtime on servers in config
         server.getEventManager().register(instance, new LogoutEvent());
         server.getEventManager().register(instance, new PluginMessage(channelIdentifier));
 
-        server.getCommandManager().register("playtime", new PlaytimeCommand(server), "pt");
+        PlaytimeTop playtimeTop = new PlaytimeTop();
+        UpdatePlaytimeTop updatePlaytimeTop = new UpdatePlaytimeTop(playtimeTop);
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+        executorService.scheduleAtFixedRate(updatePlaytimeTop, 0, Config.TOP_UPDATE_MINUTES, TimeUnit.MINUTES);
+        server.getCommandManager().register("playtime", new PlaytimeCommand(server, playtimeTop), "pt");
         server.getCommandManager().register("seen", new SeenCMD(server));
 //        new PlaytimeCMD().createPlaytimeCommand(server);
     }

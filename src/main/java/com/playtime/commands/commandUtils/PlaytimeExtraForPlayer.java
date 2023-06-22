@@ -56,7 +56,7 @@ public class PlaytimeExtraForPlayer {
     }
 
     private static String buildMessage(UUID uuid, int days) {
-        String header = Config.Messages.PLAYTIME_EXTENDED_FORMAT_HEADER.getMessage().replaceAll("%time%", "in the last " + days + " day" + (days == 1 ? "" : "s")).replaceAll("<nl>","\n");
+        String header = Config.Messages.PLAYTIME_EXTENDED_FORMAT_HEADER.getMessage().replaceAll("<time>", "in the last " + days + " day" + (days == 1 ? "" : "s")).replaceAll("<nl>","\n");
         String format = Config.Messages.PLAYTIME_EXTENDED_FORMAT.getMessage().replaceAll("<nl>","\n");
         String footer = Config.Messages.PLAYTIME_EXTENDED_FORMAT_FOOTER.getMessage().replaceAll("<nl>","\n");
         StringBuilder stringBuilder = new StringBuilder();
@@ -75,7 +75,7 @@ public class PlaytimeExtraForPlayer {
             if(!Config.TRACKED_SERVERS.contains(entry.getKey())) continue;
             Long time = entry.getValue();
             totalTime += time;
-            stringBuilder.append(format.replaceAll("%server%", Utilities.capitalize(entry.getKey())).replaceAll("%time%", Utilities.convertTime(time))).append("\n");
+            stringBuilder.append(format.replaceAll("<server>", Utilities.capitalize(entry.getKey())).replaceAll("<time>", Utilities.convertTime(time))).append("\n");
         }
 
         stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(totalTime)));
@@ -96,7 +96,7 @@ public class PlaytimeExtraForPlayer {
                 replacement = i + " weeks ago";
                 break;
         }
-        String header = Config.Messages.PLAYTIME_EXTENDED_FORMAT_HEADER.getMessage().replaceAll("<nl>", "\n").replaceAll("%time%", replacement);
+        String header = Config.Messages.PLAYTIME_EXTENDED_FORMAT_HEADER.getMessage().replaceAll("<nl>", "\n").replaceAll("<time>", replacement);
         String format = Config.Messages.PLAYTIME_EXTENDED_FORMAT.getMessage().replaceAll("<nl>", "\n");
         String footer = Config.Messages.PLAYTIME_EXTENDED_FORMAT_FOOTER.getMessage().replaceAll("<nl>", "\n");
         StringBuilder stringBuilder = new StringBuilder();
@@ -114,7 +114,7 @@ public class PlaytimeExtraForPlayer {
             if(!Config.TRACKED_SERVERS.contains(entry.getKey().toLowerCase())) continue;
             Long time = entry.getValue();
             totalTime += time;
-            stringBuilder.append(format.replaceAll("%server%", Utilities.capitalize(entry.getKey())).replaceAll("%time%", Utilities.convertTime(time))).append("\n");
+            stringBuilder.append(format.replaceAll("<server>", Utilities.capitalize(entry.getKey())).replaceAll("<time>", Utilities.convertTime(time))).append("\n");
         }
 
         stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(totalTime)));

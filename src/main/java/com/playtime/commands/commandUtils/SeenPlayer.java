@@ -59,8 +59,8 @@ public class SeenPlayer {
         return MiniMessage.miniMessage().deserialize(Config.Messages.SEEN_FORMAT.getMessage()
                 .replaceAll("<player>", player.getUsername())
                 .replaceAll("%online/offline%", Config.Messages.SEEN_ONLINE_FORMAT.getMessage())
-                .replaceAll("%time%", passedTime)
-                .replaceAll("%server%", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Unknown"));
+                .replaceAll("<time>", passedTime)
+                .replaceAll("<server>", player.getCurrentServer().isPresent() ? player.getCurrentServer().get().getServerInfo().getName() : "Unknown"));
     }
 
     private static Component getOfflineSeen(String playerName) {
@@ -81,7 +81,7 @@ public class SeenPlayer {
         return MiniMessage.miniMessage().deserialize(Config.Messages.SEEN_FORMAT.getMessage()
                 .replaceAll("<player>", Utilities.getPlayerName(uuid))
                 .replaceAll("%online/offline%", Config.Messages.SEEN_OFFLINE_FORMAT.getMessage())
-                .replaceAll("%time%", getPassedTime(lastSeen.getLastSeen()))
-                .replaceAll("%server%", lastSeen.getServer()));
+                .replaceAll("<time>", getPassedTime(lastSeen.getLastSeen()))
+                .replaceAll("<server>", lastSeen.getServer()));
     }
 }

@@ -43,7 +43,7 @@ public class PlaytimeForPlayer {
             if(serverPlaytime == null) continue;
             long playtime = serverPlaytime.getPlaytime();
             if (playtime == 0) continue;
-            stringBuilder.append(format.replaceAll("%server%", Utilities.capitalize(server)).replaceAll("%time%", Utilities.convertTime(playtime))).append("\n");
+            stringBuilder.append(format.replaceAll("<server>", Utilities.capitalize(server)).replaceAll("<time>", Utilities.convertTime(playtime))).append("\n");
         }
 
         stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(playtimePlayer.getTotalPlaytime())));

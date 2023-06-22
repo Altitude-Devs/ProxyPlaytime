@@ -1,18 +1,19 @@
 package com.playtime.database;
 
+import com.playtime.Playtime;
 import com.playtime.maps.Maps;
-import com.playtime.util.objects.PlaytimePlayer;
-import com.playtime.util.objects.PlaytimeSeen;
-import com.playtime.util.objects.ServerPlaytime;
-import com.playtime.util.objects.ServerSession;
+import com.playtime.util.objects.*;
 import com.velocitypowered.api.proxy.Player;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.UUID;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class Queries {
     public static void batchUpdatePlaytime() {
@@ -289,4 +290,82 @@ public class Queries {
         }
         return sessionLength;
     }
+
+    public static void updateTopPlayers(int amount, TopType topType, PlaytimeTop playtimeTop) {
+        long calculateFromHere;
+        switch (topType) {
+            case TOTAL -> {
+                calculateFromHere = 0;
+            }
+            case MONTHLY -> {
+                LocalDate startOfMonth = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
+                calculateFromHere = startOfMonth.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
+            }
+            case WEEKLY -> {
+                LocalDate startOfMonth = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+                calculateFromHere = startOfMonth.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
+            }
+            case DAILY -> {
+                LocalDate startOfMonth = LocalDate.now().atStartOfDay().toLocalDate();
+                calculateFromHere = startOfMonth.atStartOfDay(ZoneOffset.UTC).toEpochSecond();
+            }
+            default -> calculateFromHere = -1;
+        }
+        if (calculateFromHere == -1) {
+            Playtime.getInstance().getLogger().warn("Unable to update due to invalid calculate from here time");
+            return;
+        }
+        String sql = """
+                SELECT uuid, SUM(
+                    CASE
+                        WHEN session_start < ? THEN session_end - ?
+                        ELSE session_end - session_start
+                    END
+                ) AS total_online_time
+                FROM sessions
+                WHERE session_start >= ?
+                GROUP BY uuid
+                ORDER BY total_online_time DESC
+                LIMIT ?;
+                """;
+
+        try {
+            PreparedStatement statement = DatabaseManager.getConnection().prepareStatement(sql);
+
+            statement.setLong(1, calculateFromHere);
+            statement.setLong(2, calculateFromHere);
+            statement.setLong(3, calculateFromHere);
+            statement.setInt(4, amount);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                storeTopPlayer(resultSet, topType, playtimeTop);
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    private static void storeTopPlayer(ResultSet resultSet, TopType topType, PlaytimeTop playtimeTop) throws SQLException {
+        UUID uuid;
+        Playtime instance = Playtime.getInstance();
+        String stringUUID = resultSet.getString("uuid");
+        try {
+            uuid = UUID.fromString(stringUUID);
+        } catch (IllegalArgumentException exception) {
+            instance.getLogger().warn("Received invalid uuid while processing playtime top: [" + stringUUID + "]");
+            return;
+        }
+        Optional<Player> optionalPlayer = instance.getServer().getPlayer(uuid);
+        long totalOnlineTime = resultSet.getLong("total_online_time");
+        if (optionalPlayer.isPresent()) {
+            playtimeTop.addToTop(topType, new TopPlayer(optionalPlayer.get().getUsername() ,uuid, totalOnlineTime, true));
+            return;
+        }
+        CompletableFuture<String> stringCompletableFuture = instance.getLuckPerms().getUserManager().lookupUsername(uuid);
+        stringCompletableFuture.handle((a, b) -> {
+            playtimeTop.addToTop(topType, new TopPlayer(a == null ? stringUUID : a , uuid, totalOnlineTime, false));
+            return a;
+        });
+    }
+
 }
