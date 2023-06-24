@@ -11,7 +11,7 @@ public class PlaytimeTop {
     private final LinkedList<TopPlayer> weeklyTop = new LinkedList<>();
     private final LinkedList<TopPlayer> dailyTop = new LinkedList<>();
 
-    public <R> R processTop(TopType topType, Function<LinkedList<TopPlayer>, R> function) {
+    public synchronized <R> R processTop(TopType topType, Function<LinkedList<TopPlayer>, R> function) {
         switch (topType) {
             case TOTAL -> {
                 return function.apply(totalTop);

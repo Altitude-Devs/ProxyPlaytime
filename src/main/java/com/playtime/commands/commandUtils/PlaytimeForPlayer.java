@@ -46,7 +46,7 @@ public class PlaytimeForPlayer {
             stringBuilder.append(format.replaceAll("<server>", Utilities.capitalize(server)).replaceAll("<time>", Utilities.convertTime(playtime))).append("\n");
         }
 
-        stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(playtimePlayer.getTotalPlaytime())));
+        stringBuilder.append(footer.replaceAll("<total>", Utilities.convertTime(playtimePlayer.getTotalPlaytime())));
 
         return stringBuilder.toString();
     }

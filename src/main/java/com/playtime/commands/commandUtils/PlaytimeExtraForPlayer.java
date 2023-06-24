@@ -78,7 +78,7 @@ public class PlaytimeExtraForPlayer {
             stringBuilder.append(format.replaceAll("<server>", Utilities.capitalize(entry.getKey())).replaceAll("<time>", Utilities.convertTime(time))).append("\n");
         }
 
-        stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(totalTime)));
+        stringBuilder.append(footer.replaceAll("<total>", Utilities.convertTime(totalTime)));
 
         return stringBuilder.toString();
     }
@@ -117,7 +117,7 @@ public class PlaytimeExtraForPlayer {
             stringBuilder.append(format.replaceAll("<server>", Utilities.capitalize(entry.getKey())).replaceAll("<time>", Utilities.convertTime(time))).append("\n");
         }
 
-        stringBuilder.append(footer.replaceAll("%total%", Utilities.convertTime(totalTime)));
+        stringBuilder.append(footer.replaceAll("<total>", Utilities.convertTime(totalTime)));
 
         return stringBuilder.toString();
     }

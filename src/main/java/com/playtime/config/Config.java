@@ -169,7 +169,7 @@ public final class Config {
         PLAYTIME_TOP_FORMAT_FOOTER("playtime-top-format-footer", "<white><st>--------------</st></white><dark_gray>[<st>--</st></dark_gray>    <dark_gray><st>--</st>]</dark_gray><white><st>--------------</st></white>"),
         PLAYTIME_FORMAT_HEADER("playtime-format-header", "<white><st>-------</st></white><dark_gray>[<st>--</st></dark_gray><gold> <player>'s playtime:</gold> <dark_gray><st>--</st>]</dark_gray><white><st>-------</white></st>"),
         PLAYTIME_FORMAT("playtime-format", "<gold><server></gold>: <time>"),
-        PLAYTIME_FORMAT_FOOTER("playtime-format-footer", "<white><st>------------</st></white>", "<gold>Total</gold><white>: %total%</white>"
+        PLAYTIME_FORMAT_FOOTER("playtime-format-footer", "<white><st>------------</st></white>", "<gold>Total</gold><white>: <total></white>"
                 , "<white><st>--------------</st></white><dark_gray>[<st>--</st></dark_gray>    <dark_gray><st>--</st>]</dark_gray><white><st>--------------</st></white>"),
         PLAYTIME_EXTENDED_FORMAT_HEADER("playtime-extended-format-header", "<white><st>-------</white></st><dark_gray>[<st>--</st></dark_gray><gold> <player>'s playtime <time>:</gold> <dark_gray><st>--</st>]</dark_gray><white><st>-------</st></white>"),
         PLAYTIME_EXTENDED_FORMAT("playtime-extended-format", "<gold><server></gold><white>: <time></white>"),
@@ -185,7 +185,7 @@ public final class Config {
         INVALID_EXTENDED_PLAYTIME_COMMAND("messages.playtime-extended-invalid-command", "<red>Invalid Usage. <gold>/playtime extra <player> <day/week> [amount]</gold></red>"),
         INVALID_PLAYTIME_MOVE_COMMAND("messages.playtime-move-invalid-command", "<red>Invalid Usage. <gold>/playtime move <player to move from> <player to move to> <add/set></gold></red>"),
         INVALID_SEEN_COMMAND("messages.invalid-seen-command", "<red>Invalid Usage. <gold>/seen <player></gold></red>"),
-        SEEN_FORMAT("messages.seen-format", "<white>Player <gold><player></gold> has been %online/offline% for <time> on <server>.</white>"),
+        SEEN_FORMAT("messages.seen-format", "<white>Player <gold><player></gold> has been / for <time> on <server>.</white>"),
         SEEN_ONLINE_FORMAT("messages.seen-online-format", "<green>online</green>"),
         SEEN_OFFLINE_FORMAT("messages.seen-offline-format", "<red>offline</red>"),
         SEEN_TIME_NULL("messages.seen-millisecondSessionTime-null", "<red>No recorded millisecondSessionTime.</red>"),
