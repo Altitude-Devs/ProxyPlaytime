@@ -71,8 +71,8 @@ public class PlaytimeDataProcessor implements Runnable{
         //Send the message that they got ranked up
         String titleMessage = group.getPlayerTitleMessage().replaceAll("<player>", player.getUsername());
         String[] splitMessage;
-        if (titleMessage.contains("\n")) {
-            splitMessage = titleMessage.split("\n", 2);
+        if (titleMessage.contains("\\n")) {
+            splitMessage = titleMessage.split("\\n", 2);
         } else {
             splitMessage = new String[]{titleMessage, ""};
         }
