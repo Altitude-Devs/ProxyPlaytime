@@ -29,7 +29,7 @@ tasks {
     shadowJar {
         dependsOn(getByName("relocateJars") as ConfigureShadowRelocation)
         archiveFileName.set("${project.name}-${project.version}.jar")
-        minimize()
+//        minimize()
         configurations = listOf(project.configurations.shadow.get())
     }
 
@@ -47,6 +47,6 @@ dependencies {
     // Velocity
     compileOnly("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT") // Velocity
     annotationProcessor("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
-    implementation("mysql:mysql-connector-java:8.0.27") // mysql
+    shadow("mysql:mysql-connector-java:8.0.27") // mysql
     compileOnly("net.luckperms:api:5.4") // luckperms
 }
